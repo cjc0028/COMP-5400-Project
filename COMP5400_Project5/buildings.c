@@ -564,10 +564,10 @@ void draw_ground(void)
 	glColor3f(0.0, 0.7, 0.0);
 
 	glBegin(GL_QUADS);
-		glVertex3f(-400.0, 0.0, 0.0);
-		glVertex3f(450.0, 0.0, 0.0);
-		glVertex3f(450.0, 0.0, -450.0);
-		glVertex3f(-400.0, 0.0, -450.0);
+		glVertex3f(-425.0, 0.0, 225.0);
+		glVertex3f(425.0, 0.0, 225.0);
+		glVertex3f(425.0, 0.0, -225.0);
+		glVertex3f(-425.0, 0.0, -225.0);
 	glEnd();
 	glPopMatrix();
 }
@@ -575,19 +575,19 @@ void draw_ground(void)
 void draw_buildings(void)
 {
 	draw_ground();
-	draw_shelby(-250.0, -350.0);
-	draw_wiggins(-320.0, -210.0);
-	draw_woltosz(-180.0, -210.0);
-	draw_broun(-140.0, -130.0);
-	draw_lbuilding(100.0, -180.0);
-	draw_shops(35.0, -265.0);
-	draw_waterplant(100.0, -310.0);
-	draw_textile(45.0, -370.0);
-	draw_ramsey(210.0, -370.0);
-	draw_wilmore(210.0, -270.0);
-	draw_ross(280.0, -150.0);
-	draw_harbert(350.0, -375.0);
-	draw_davis(390.0, -280.0);
+	draw_shelby(-275.0, -125.0);
+	draw_wiggins(-345.0, 15.0);
+	draw_woltosz(-205.0, 15.0);
+	draw_broun(-165.0, 95.0);
+	draw_lbuilding(75.0, 45.0);
+	draw_shops(10.0, -45.0);
+	draw_waterplant(75.0, -85.0);
+	draw_textile(20.0, -145.0);
+	draw_ramsey(185.0, -145.0);
+	draw_wilmore(185.0, -45.0);
+	draw_ross(255.0, 75.0);
+	draw_harbert(325.0, -150.0);
+	draw_davis(365.0, -55.0);
 
 	if (bounds_enabled()) draw_bounds();
 }

@@ -1,2 +1,3 @@
-﻿  Main.c
-  COMP5400_Project5.vcxproj -> C:\Users\Zardios\Documents\Visual Studio 2015\Projects\COMP5400_Project5\Debug\COMP5400_Project5.exe
+﻿  student.c
+c:\users\zardios\source\repos\comp-5400-project\comp5400_project5\student.c(622): warning C4013: 'rand' undefined; assuming extern returning int
+  COMP5400_Project5.vcxproj -> C:\Users\Zardios\Source\Repos\COMP-5400-Project\Debug\COMP5400_Project5.exe

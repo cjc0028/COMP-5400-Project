@@ -20,10 +20,11 @@ struct Student
 	GLfloat head_angle[2];
 };
 
-struct Student student1 = { {0.0, 1.9, 0.0}, 1.0, {0.0, 180.0}, {0.0, 0.0} };
-struct Student initial_student = { { 0.0, 1.9, 0.0 }, 1.0,{ 0.0, 180.0 },{ 0.0, 0.0 } };
+struct Student student1 = { {-100.0, 1.9, 0.0}, 1.0, {0.0, 180.0}, {0.0, 0.0} };
+struct Student initial_student = { { -100.0, 1.9, 0.0 }, 1.0,{ 0.0, 180.0 },{ 0.0, 0.0 } };
+int bystander_colors[4] = { -1, -1, -1, -1 };
 
-void draw_head(void)
+void draw_head(int skin_color)
 {
 	glPushMatrix();
 	glTranslatef(0.0, 6.5, 0.0);
@@ -31,7 +32,7 @@ void draw_head(void)
 	glRotatef(student1.head_angle[0], 1.0, 0.0, 0.0);
 
 	glPushMatrix();
-	change_color(COLOR_SKIN);
+	change_color(skin_color);
 	glTranslatef(0.0, 4.0, 0.0);
 	glScalef(8.0, 8.0, 8.0);
 	draw_cube();
@@ -182,25 +183,25 @@ void draw_face(void)
 	glPopMatrix();
 }
 
-void draw_body(void)
+void draw_body(int shirt_color)
 {
 	glPushMatrix();
-	change_color(COLOR_GREEN);
+	change_color(shirt_color);
 	glScalef(8.0, 12.0, 4.0);
 	draw_cube();
 	glPopMatrix();
 }
 
-void draw_left_arm(void)
+void draw_left_arm(int shirt_color, int skin_color)
 {
-	draw_left_bicep();
-	draw_left_forearm();
+	draw_left_bicep(shirt_color);
+	draw_left_forearm(shirt_color, skin_color);
 }
 
-void draw_left_bicep(void)
+void draw_left_bicep(int shirt_color)
 {
 	glPushMatrix();
-	change_color(COLOR_GREEN);
+	change_color(shirt_color);
 	glTranslatef(4.0, 6.0, 0.0);
 	glRotatef(15, 0.0, 0.0, 1.0);
 	glTranslatef(2.0, -2.5, 0.0);
@@ -209,10 +210,10 @@ void draw_left_bicep(void)
 	glPopMatrix();
 }
 
-void draw_left_forearm(void)
+void draw_left_forearm(int shirt_color, int skin_color)
 {
 	glPushMatrix();
-	change_color(COLOR_GREEN);
+	change_color(shirt_color);
 	glTranslatef(4.0 + (5.39 * sin(36.8 * M_PI / 180)), 6.0 - (5.39 * cos(36.8 * M_PI / 180)), 2.0);
 	glRotatef(15, 0.0, 0.0, 1.0);
 	glRotatef(-15, 1.0, 0.0, 0.0);
@@ -221,30 +222,30 @@ void draw_left_forearm(void)
 	glScalef(4.0, 5.0, 4.0);
 	draw_cube();
 	glPopMatrix();
-	draw_left_hand();
+	draw_left_hand(skin_color);
 	glPopMatrix();
 }
 
-void draw_left_hand(void)
+void draw_left_hand(int skin_color)
 {
 	glPushMatrix();
-	change_color(COLOR_SKIN);
+	change_color(skin_color);
 	glTranslatef(0.0, -6.0, -2.0);
 	glScalef(4.0, 2.0, 4.0);
 	draw_cube();
 	glPopMatrix();
 }
 
-void draw_right_arm(void)
+void draw_right_arm(int shirt_color, int skin_color)
 {
-	draw_right_bicep();
-	draw_right_forearm();
+	draw_right_bicep(shirt_color);
+	draw_right_forearm(shirt_color, skin_color);
 }
 
-void draw_right_bicep(void)
+void draw_right_bicep(int shirt_color)
 {
 	glPushMatrix();
-	change_color(COLOR_GREEN);
+	change_color(shirt_color);
 	glTranslatef(-4.0, 6.0, 0.0);
 	glRotatef(-45, 0.0, 0.0, 1.0);
 	glTranslatef(-2.0, -2.5, 0.0);
@@ -253,10 +254,10 @@ void draw_right_bicep(void)
 	glPopMatrix();
 }
 
-void draw_right_forearm(void)
+void draw_right_forearm(int shirt_color, int skin_color)
 {
 	glPushMatrix();
-	change_color(COLOR_GREEN);
+	change_color(shirt_color);
 	glTranslatef(-4.0 - (5.39 * sin(66.8 * M_PI / 180)), 6.0 - (5.39 * cos(66.8 * M_PI / 180)), 2.0);
 	glRotatef(-45, 0.0, 0.0, 1.0);
 	glRotatef(-45, 1.0, 0.0, 0.0);
@@ -265,31 +266,31 @@ void draw_right_forearm(void)
 	glScalef(4.0, 5.0, 4.0);
 	draw_cube();
 	glPopMatrix();
-	draw_right_hand();
+	draw_right_hand(skin_color);
 	draw_phone();
 	glPopMatrix();
 }
 
-void draw_right_hand(void)
+void draw_right_hand(int skin_color)
 {
 	glPushMatrix();
-	change_color(COLOR_SKIN);
+	change_color(skin_color);
 	glTranslatef(0.0, -6.0, -2.0);
 	glScalef(4.0, 2.0, 4.0);
 	draw_cube();
 	glPopMatrix();
 }
 
-void draw_left_leg(void)
+void draw_left_leg(int pants_color, int shoe_color)
 {
-	draw_left_thigh();
-	draw_left_calf();
+	draw_left_thigh(pants_color);
+	draw_left_calf(pants_color, shoe_color);
 }
 
-void draw_left_thigh(void)
+void draw_left_thigh(int pants_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BLUE);
+	change_color(pants_color);
 	glTranslatef(2.0, -6.0, 2.0);
 	glRotatef(-30, 1.0, 0.0, 0.0);
 	glTranslatef(0.0, -2.5, -2.0);
@@ -298,10 +299,10 @@ void draw_left_thigh(void)
 	glPopMatrix();
 }
 
-void draw_left_calf(void)
+void draw_left_calf(int pants_color, int shoe_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BLUE);
+	change_color(pants_color);
 	glTranslatef(2.0, -6.0 - (6.4 * sin((30 + 51.3) * M_PI / 180)), 2.0 + (6.4 * cos((30 * 51.3) * M_PI / 180)));
 	glRotatef(0.0, 1.0, 0.0, 0.0);
 	glPushMatrix();
@@ -309,30 +310,30 @@ void draw_left_calf(void)
 	glScalef(4.0, 5.0, 4.0);
 	draw_cube();
 	glPopMatrix();
-	draw_left_foot();
+	draw_left_foot(shoe_color);
 	glPopMatrix();
 }
 
-void draw_left_foot(void)
+void draw_left_foot(int shoe_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BROWN);
+	change_color(shoe_color);
 	glTranslatef(0.0, -6.0, 3.0);
 	glScalef(4.0, 2.0, 6.0);
 	draw_cube();
 	glPopMatrix();
 }
 
-void draw_right_leg(void)
+void draw_right_leg(int pants_color, int shoe_color)
 {
-	draw_right_thigh();
-	draw_right_calf();
+	draw_right_thigh(pants_color);
+	draw_right_calf(pants_color, shoe_color);
 }
 
-void draw_right_thigh(void)
+void draw_right_thigh(int pants_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BLUE);
+	change_color(pants_color);
 	glTranslatef(-2.0, -6.0, -2.0);
 	glRotatef(30, 1.0, 0.0, 0.0);
 	glTranslatef(0.0, -2.5, 2.0);
@@ -341,10 +342,10 @@ void draw_right_thigh(void)
 	glPopMatrix();
 }
 
-void draw_right_calf(void)
+void draw_right_calf(int pants_color, int shoe_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BLUE);
+	change_color(pants_color);
 	glTranslatef(-2.0, -6.0 - (5.0 * cos(30 * M_PI / 180)), -2.0 - (5.0 * sin(30 * M_PI / 180)));
 	glRotatef(60.0, 1.0, 0.0, 0.0);
 	glPushMatrix();
@@ -352,14 +353,14 @@ void draw_right_calf(void)
 	glScalef(4.0, 5.0, 4.0);
 	draw_cube();
 	glPopMatrix();
-	draw_right_foot();
+	draw_right_foot(shoe_color);
 	glPopMatrix();
 }
 
-void draw_right_foot(void)
+void draw_right_foot(int shoe_color)
 {
 	glPushMatrix();
-	change_color(COLOR_BROWN);
+	change_color(shoe_color);
 	glTranslatef(0.0, -6.0, 3.0);
 	glScalef(4.0, 2.0, 6.0);
 	draw_cube();
@@ -596,18 +597,36 @@ void draw_phone(void)
 
 void draw_student(void)
 {
-	glTranslatef(student1.position[0], student1.position[1], student1.position[2]);
+	glTranslatef(student1.position[0], student1.position[1] * student1.scale, student1.position[2]);
 	glScalef(student1.scale, student1.scale, student1.scale);
 	glScalef(0.1, 0.1, 0.1);
 	glRotatef(student1.angle[1], 0.0, 1.0, 0.0);
 
-	draw_head();
-	draw_body();
-	draw_left_arm();
-	draw_right_arm();
-	draw_left_leg();
-	draw_right_leg();
+	draw_head(COLOR_SKIN);
+	draw_body(COLOR_GREEN);
+	draw_left_arm(COLOR_GREEN, COLOR_SKIN);
+	draw_right_arm(COLOR_GREEN, COLOR_SKIN);
+	draw_left_leg(COLOR_BLUE, COLOR_BROWN);
+	draw_right_leg(COLOR_BLUE, COLOR_BROWN);
 	draw_backpack();
+}
+
+void draw_bystander(void)
+{
+	glTranslatef(-100.0, 1.9 * student1.scale, 0.0);
+	glScalef(student1.scale, student1.scale, student1.scale);
+	glScalef(0.1, 0.1, 0.1);
+	glRotatef(180, 0.0, 1.0, 0.0);
+
+	for (int i = 0; i < 4; i++)
+		if (bystander_colors[i] == -1) bystander_colors[i] = rand() % 7;
+
+	draw_head(bystander_colors[0]);
+	draw_body(bystander_colors[1]);
+	draw_left_arm(bystander_colors[1], bystander_colors[0]);
+	draw_right_arm(bystander_colors[1],bystander_colors[0]);
+	draw_left_leg(bystander_colors[2], bystander_colors[3]);
+	draw_right_leg(bystander_colors[2], bystander_colors[3]);
 }
 
 void rotate_student(GLfloat theta, GLfloat phi)

@@ -12,5 +12,4 @@ GLfloat * get_camera_angle(void);
 
 void reset_camera(void);
 void calculate_target(void);
-void camera_mode(void);
 #endif // !__camera_h__

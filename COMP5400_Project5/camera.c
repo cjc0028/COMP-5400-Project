@@ -18,13 +18,13 @@ struct Camera
 	GLfloat angle[2];
 };
 
-struct Camera camera1 = { { 0.0, 2.95, 10.0 }, 
-						  { 0.0, 2.95, -1.0 },
+struct Camera camera1 = { { -100.0, 2.95, 10.0 }, 
+						  { -100.0, 2.95, -1.0 },
 						  { 0.0, 1.0, 0.0 },
 						  { 0.0, 0.0 } };
 
-struct Camera initial_camera = { { 0.0, 2.95, 10.0 },
-								 { 0.0, 2.95, -1.0 },
+struct Camera initial_camera = { { -100.0, 2.95, 10.0 },
+								 { -100.0, 2.95, -1.0 },
 								 { 0.0, 1.0, 0.0 },
 								 { 0.0, 0.0 } };
 

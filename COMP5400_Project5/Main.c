@@ -40,6 +40,8 @@
 #define _USE_MATH_DEFINES
 #include<math.h>
 #include<GL\glut.h>
+#include<stdlib.h>
+#include<time.h>
 #include "student.h"
 #include "cube.h"
 #include "buildings.h"
@@ -131,6 +133,7 @@ void display(void)
 	draw_buildings();
 	glPopMatrix();
 
+	draw_bystander();
 	draw_text();
 
 	glFlush();
@@ -176,6 +179,7 @@ void specialKeys(int key, int x, int y)
 			break;
 		case GLUT_KEY_F1:
 			camera_mode = !camera_mode;
+			break;
 		default:
 			break;
 	}
@@ -274,6 +278,7 @@ void toggle_mode(void)
 
 void main(int argc, char** argv)
 {
+	srand(time(NULL));
 	glutInit(&argc, argv);
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
