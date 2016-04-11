@@ -93,6 +93,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,11 +163,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="buildings.c" />
-    <ClCompile Include="camera.c" />
-    <ClCompile Include="cube.c" />
-    <ClCompile Include="Main.c" />
-    <ClCompile Include="student.c" />
+    <ClCompile Include="src\buildings.c" />
+    <ClCompile Include="src\camera.c" />
+    <ClCompile Include="src\cube.c" />
+    <ClCompile Include="src\Main.c" />
+    <ClCompile Include="src\student.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

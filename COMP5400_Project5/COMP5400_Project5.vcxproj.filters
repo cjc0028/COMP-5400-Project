@@ -38,19 +38,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="buildings.c">
+    <ClCompile Include="src\buildings.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="camera.c">
+    <ClCompile Include="src\camera.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="cube.c">
+    <ClCompile Include="src\cube.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.c">
+    <ClCompile Include="src\Main.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="student.c">
+    <ClCompile Include="src\student.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
