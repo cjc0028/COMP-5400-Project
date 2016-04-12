@@ -18,26 +18,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="buildings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="student.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\buildings.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -53,5 +33,25 @@
     <ClCompile Include="src\student.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\buildings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\student.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
