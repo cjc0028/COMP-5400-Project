@@ -133,7 +133,7 @@ void display(void)
 	draw_buildings();
 	glPopMatrix();
 
-	draw_bystander();
+	//draw_bystander();
 	draw_text();
 
 	glFlush();

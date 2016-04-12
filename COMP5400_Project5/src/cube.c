@@ -19,8 +19,8 @@ GLfloat normals[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -0
 
 GLfloat colors[][3] = { { 1.0, 0.80, 0.58 },{ 1.0, 0.0, 0.0 },{ 0.37, 0.15, 0.02 },
 						{ 0.0, 0.5, 0.0 },{ 0.0, 0.0, 0.5 },{ 0.5, 0.5, 0.5 },
-						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 } };
-enum color { skin, red, brown, green, blue, gray, white, orange };
+						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 },{ 0.0, 0.0, 0.0 } };
+enum color { skin, red, brown, green, blue, gray, white, orange, black };
 static int current_color = skin;
 static int is_bounding_enabled = 0;
 
@@ -80,6 +80,9 @@ void change_color(int x)
 		break;
 	case 7:
 		current_color = orange;
+		break;
+	case 8:
+		current_color = black;
 		break;
 	default:
 		current_color = skin;

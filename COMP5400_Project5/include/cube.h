@@ -10,6 +10,7 @@
 #define COLOR_GRAY 5
 #define COLOR_WHITE 6
 #define COLOR_ORANGE 7
+#define COLOR_BLACK 8
 
 void cube_face(int a, int b, int c, int d);
 void draw_cube(void);
