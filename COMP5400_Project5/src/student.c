@@ -170,11 +170,12 @@ void draw_face(void)
 
 	glPushMatrix();
 	glColor3f(0.0, 0.0, 0.0);
-	glLineWidth(4.0);
 	glTranslatef(0.0, 2.0, 4.01);
-	glBegin(GL_LINE_STRIP);
-		glVertex2f(-2.0, 0.0);
-		glVertex2f(2.0, 0.0);
+	glBegin(GL_POLYGON);
+		glVertex2f(-2.0, 0.25);
+		glVertex2f(-2.0, -0.25);
+		glVertex2f(2.0, -0.25);
+		glVertex2f(2.0, 0.25);
 	glEnd();
 	glPopMatrix();
 
