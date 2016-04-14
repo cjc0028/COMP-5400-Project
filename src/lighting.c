@@ -120,12 +120,19 @@ void change_intensity(GLfloat delta)
 		{
 			float attr[4] = {0, 0, 0, 0};
 
+			glGetLightfv(GL_LIGHT0 + i, GL_AMBIENT, attr);
+			if (attr[0] + delta >= 0.0 || attr[1] + delta >= 0.0 || attr[2] + delta >= 0.0)
+				attr[0] += delta, attr[1] += delta, attr[2] += delta;
+			glLightfv(i + 0x4000, GL_AMBIENT, attr);
+
 			glGetLightfv(GL_LIGHT0 + i, GL_DIFFUSE, attr);
-			attr[0] += delta, attr[1] += delta, attr[2] += delta;
+			if (attr[0] + delta >= 0.0 || attr[1] + delta >= 0.0 || attr[2] + delta >= 0.0)
+				attr[0] += delta, attr[1] += delta, attr[2] += delta;
 			glLightfv(i + 0x4000, GL_DIFFUSE, attr);
 
 			glGetLightfv(GL_LIGHT0 + i, GL_SPECULAR, attr);
-			attr[0] += delta, attr[1] += delta, attr[2] += delta;
+			if (attr[0] + delta >= 0.0 || attr[1] + delta >=0.0 || attr[2] + delta >= 0.0)
+				attr[0] += delta, attr[1] += delta, attr[2] += delta;
 			glLightfv(i + 0x4000, GL_SPECULAR, attr);
 		}
 	}

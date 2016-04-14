@@ -88,7 +88,7 @@ void draw_hair(void)
 	GLfloat color_brown[3] = { 0.37, 0.15, 0.02 };
 	glPushMatrix();
 	glColor3fv(color_brown);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color_brown);
+	//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color_brown);
 	glPushMatrix();
 	glTranslatef(0.0, 8.25, 0.0);
 	glRotatef(-90, 1.0, 0.0, 0.0);
@@ -191,28 +191,28 @@ void draw_face(void)
 	change_color(COLOR_WHITE);
 	glTranslatef(-1.5, 4.1, 3.51);
 	glScalef(2.0, 1.0, 1.0);
-	cube_face(4, 5, 6, 7);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_BLACK);
 	glTranslatef(-1.3, 4.0, 3.52);
 	glScalef(0.75, 0.75, 1.0);
-	cube_face(4, 5, 6, 7);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_WHITE);
 	glTranslatef(1.5, 4.1, 3.51);
 	glScalef(2.0, 1.0, 1.0);
-	cube_face(4, 5, 6, 7);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_BLACK);
 	glTranslatef(1.3, 4.0, 3.52);
 	glScalef(0.75, 0.75, 1.0);
-	cube_face(4, 5, 6, 7);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();

@@ -14,6 +14,8 @@
 #define COLOR_GRASS 9
 
 void cube_face(int a, int b, int c, int d);
+void cube(void);
+void square(int r);
 void draw_cube(void);
 void change_color(int x);
 void toggle_bounds(void);

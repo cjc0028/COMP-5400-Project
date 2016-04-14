@@ -563,24 +563,13 @@ void draw_davis(GLfloat x, GLfloat z)
 
 void draw_ground(void)
 {
-	GLfloat color_grass[3] = { 0.0, 0.7, 0.0 };
 	glPushMatrix();
-	glColor3fv(color_grass);
+	change_color(COLOR_GRASS);
 
-	glNormal3f(0.0, 1.0, 0.0);
-
-	for (int x = -ground_w/2; x < ground_w/2; x += 5)
-	{
-		for (int z = -ground_d/2; z < ground_d/2; z += 5)
-		{
-			glBegin(GL_QUADS);
-			glVertex3f(x, 0, z);
-			glVertex3f(x, 0, z + 5);
-			glVertex3f(x + 5, 0, z + 5);
-			glVertex3f(x + 5, 0, z);
-			glEnd();
-		}
-	}
+	glRotatef(-90, 1, 0, 0);
+	glTranslatef(0.0, 0.0, -0.5);
+	glScalef(ground_w, ground_d, 1.0);
+	square(6);
 
 	glPopMatrix();
 }
