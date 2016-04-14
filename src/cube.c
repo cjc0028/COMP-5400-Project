@@ -66,8 +66,8 @@ void cube_face(int a, int b, int c, int d)
 
 void draw_cube(void)
 {
-	cube_face(0, 1, 2, 3);
-	cube_face(2, 3, 7, 6);
+	cube_face(0, 3, 2, 1);
+	cube_face(3, 7, 6, 2);
 	cube_face(0, 4, 7, 3);
 	cube_face(1, 2, 6, 5);
 	cube_face(4, 5, 6, 7);

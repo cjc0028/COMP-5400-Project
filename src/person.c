@@ -246,8 +246,11 @@ void draw_head(int skin_color)
 	glTranslatef(0.0, head.scale[1] / 2.0, 0.0);
 	glScalef(head.scale[0], head.scale[1], head.scale[2]);
 	draw_cube();
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+	if (isStudent)
+	{
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
+		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+	}
 	glPopMatrix();
 
 	draw_hair();
@@ -738,8 +741,8 @@ void draw_bystander(void)
 		for (int i = 0; i < 4; i++)
 			if (bystander_colors[i] == -1) bystander_colors[i] = rand() % 7;
 
-		draw_head(bystander_colors[0]);
 		draw_body(bystander_colors[1]);
+		draw_head(bystander_colors[0]);
 		draw_left_arm(bystander_colors[1], bystander_colors[0]);
 		draw_right_arm(bystander_colors[1], bystander_colors[0]);
 		draw_left_leg(bystander_colors[2], bystander_colors[3]);
