@@ -378,99 +378,99 @@ void draw_phone(void)
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.2, -8.8, -0.99);
+	glTranslatef(-0.2, -8.8, -1.99);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(3.0, 5.0, 1.0);
 	change_color(COLOR_WHITE);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -9.8, -0.98);
+	glTranslatef(-2.2, -9.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_RED);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -8.8, -0.98);
+	glTranslatef(-2.2, -8.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_BROWN);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -7.8, -0.98);
+	glTranslatef(-2.2, -7.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_GRAY);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-1.2, -9.8, -0.98);
+	glTranslatef(-1.2, -9.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_BLUE);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-1.2, -8.8, -0.98);
+	glTranslatef(-1.2, -8.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_ORANGE);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-1.2, -7.8, -0.98);
+	glTranslatef(-1.2, -7.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_GREEN);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.2, -9.8, -0.98);
+	glTranslatef(-0.2, -9.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_BLUE);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -9.8, -0.98);
+	glTranslatef(1.8, -9.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_GRAY);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -8.8, -0.98);
+	glTranslatef(1.8, -8.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_GREEN);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -7.8, -0.98);
+	glTranslatef(1.8, -7.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.75, 0.75, 1.0);
 	change_color(COLOR_ORANGE);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(2.65, -8.8, -0.98);
+	glTranslatef(2.65, -8.8, -1.98);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_BLACK);
-	cube_face(0, 1, 2, 3);
+	square(2);
 	glPopMatrix();
 
 	glPopMatrix();
@@ -722,10 +722,10 @@ void draw_student(void)
 	glRotatef(student.angle[1], 0.0, 1.0, 0.0);
 	draw_body(COLOR_GREEN);
 	draw_head(COLOR_SKIN);
-	//draw_left_arm(COLOR_GREEN, COLOR_SKIN);
-	//draw_right_arm(COLOR_GREEN, COLOR_SKIN);
-	//draw_left_leg(COLOR_BLUE, COLOR_BROWN);
-	//draw_right_leg(COLOR_BLUE, COLOR_BROWN);
+	draw_left_arm(COLOR_GREEN, COLOR_SKIN);
+	draw_right_arm(COLOR_GREEN, COLOR_SKIN);
+	draw_left_leg(COLOR_BLUE, COLOR_BROWN);
+	draw_right_leg(COLOR_BLUE, COLOR_BROWN);
 	//draw_backpack();
 }
 
