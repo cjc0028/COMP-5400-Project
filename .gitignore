@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.tlog
+/Debug/buildings.obj
+/Debug/camera.obj
+/Debug
+/COMP5400_Project5.vcxproj
+/COMP5400_Project5.vcxproj.filters
+/COMP5400_Project5.vcxproj.user
