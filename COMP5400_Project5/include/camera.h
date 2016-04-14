@@ -3,7 +3,7 @@
 #define __camera_h__
 
 void translate_camera(float delta);
-void rotate_camera(float theta, float phi);
+void rotate_camera(float phi, float psi);
 
 GLfloat * get_camera_position(void);
 GLfloat * get_camera_target(void);

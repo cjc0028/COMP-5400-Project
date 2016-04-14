@@ -7,6 +7,7 @@
 */
 
 #include<GL\glut.h>
+#include<math.h>
 #include "cube.h"
 
 GLfloat vertices[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -0.5 },
@@ -19,26 +20,46 @@ GLfloat normals[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -0
 
 GLfloat colors[][3] = { { 1.0, 0.80, 0.58 },{ 1.0, 0.0, 0.0 },{ 0.37, 0.15, 0.02 },
 						{ 0.0, 0.5, 0.0 },{ 0.0, 0.0, 0.5 },{ 0.5, 0.5, 0.5 },
-						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 },{ 0.0, 0.0, 0.0 } };
-enum color { skin, red, brown, green, blue, gray, white, orange, black };
+						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 },{ 0.0, 0.0, 0.0 },
+						{ 0.0, 0.7, 0.0 }};
+enum color { skin, red, brown, green, blue, gray, white, orange, black, grass };
 static int current_color = skin;
 static int is_bounding_enabled = 0;
+static GLfloat normal[3];
+
+void calculate_normal(GLfloat a[], GLfloat b[], GLfloat c[])
+{
+	GLfloat v1[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
+	GLfloat v2[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };
+	GLfloat vx = v1[1] * v2[2] - v1[2] * v2[1];
+	GLfloat vy = v1[2] * v2[0] - v1[0] * v2[2];
+	GLfloat vz = v1[0] * v2[1] - v1[1] * v2[0];
+
+	GLfloat l = sqrt(vx*vx + vy*vy + vz*vz);
+
+	normal[0] = vx / l;
+	normal[1] = vy / l;
+	normal[2] = vz / l;
+}
 
 void cube_face(int a, int b, int c, int d)
 {
+	calculate_normal(vertices[a], vertices[b], vertices[d]);
+	calculate_normal(vertices[b], vertices[c], vertices[a]);
+	calculate_normal(vertices[c], vertices[d], vertices[b]);
+	calculate_normal(vertices[d], vertices[a], vertices[c]);
+
 	/* draw a polygon via list of vertices */
+	glColor3fv(colors[current_color]);
+
 	glBegin(GL_POLYGON);
-		glColor3fv(colors[current_color]);
-		glNormal3fv(normals[a]);
+		glNormal3fv(normal);
 		glVertex3fv(vertices[a]);
-		glColor3fv(colors[current_color]);
-		glNormal3fv(normals[b]);
+		glNormal3fv(normal);
 		glVertex3fv(vertices[b]);
-		glColor3fv(colors[current_color]);
-		glNormal3fv(normals[c]);
+		glNormal3fv(normal);
 		glVertex3fv(vertices[c]);
-		glColor3fv(colors[current_color]);
-		glNormal3fv(normals[d]);
+		glNormal3fv(normal);
 		glVertex3fv(vertices[d]);
 	glEnd();
 }
@@ -83,6 +104,9 @@ void change_color(int x)
 		break;
 	case 8:
 		current_color = black;
+		break;
+	case 9:
+		current_color = grass;
 		break;
 	default:
 		current_color = skin;

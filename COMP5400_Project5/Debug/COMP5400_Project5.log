@@ -1,3 +1,2 @@
-﻿  student.c
-c:\users\zardios\source\repos\comp-5400-project\comp5400_project5\src\student.c(809): warning C4172: returning address of local variable or temporary: joint_location
+﻿  Main.c
   COMP5400_Project5.vcxproj -> C:\Users\Zardios\Source\Repos\COMP-5400-Project\Debug\COMP5400_Project5.exe

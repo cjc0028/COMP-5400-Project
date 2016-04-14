@@ -30,7 +30,10 @@
     <ClCompile Include="src\Main.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\student.c">
+    <ClCompile Include="src\person.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lighting.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,10 +50,13 @@
     <ClInclude Include="include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\student.h">
+    <ClInclude Include="include\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\targetver.h">
+    <ClInclude Include="include\person.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

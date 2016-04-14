@@ -6,7 +6,7 @@
 #include "buildings.h"
 #include "cube.h"
 
-typedef struct
+typedef struct Building
 {
 	GLfloat posX;
 	GLfloat posY;
@@ -23,6 +23,9 @@ void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloa
 void draw_bounds(void);
 
 Building buildings[13];
+
+GLfloat ground_w = 850, ground_d = 450;
+GLfloat ground_size[4];
 
 
 void draw_shelby(GLfloat x, GLfloat z)
@@ -560,16 +563,32 @@ void draw_davis(GLfloat x, GLfloat z)
 
 void draw_ground(void)
 {
+	GLfloat color_grass[3] = { 0.0, 0.7, 0.0 };
 	glPushMatrix();
-	glColor3f(0.0, 0.7, 0.0);
+	glColor3fv(color_grass);
 
-	glBegin(GL_QUADS);
-		glVertex3f(-425.0, 0.0, 225.0);
-		glVertex3f(425.0, 0.0, 225.0);
-		glVertex3f(425.0, 0.0, -225.0);
-		glVertex3f(-425.0, 0.0, -225.0);
-	glEnd();
+	glNormal3f(0.0, 1.0, 0.0);
+
+	for (int x = -ground_w/2; x < ground_w/2; x += 5)
+	{
+		for (int z = -ground_d/2; z < ground_d/2; z += 5)
+		{
+			glBegin(GL_QUADS);
+			glVertex3f(x, 0, z);
+			glVertex3f(x, 0, z + 5);
+			glVertex3f(x + 5, 0, z + 5);
+			glVertex3f(x + 5, 0, z);
+			glEnd();
+		}
+	}
+
 	glPopMatrix();
+}
+
+GLfloat * get_ground_size()
+{
+	GLfloat ground_size[4] = {-ground_w/2, ground_w/2, -ground_d/2, ground_d/2};
+	return ground_size;
 }
 
 void draw_buildings(void)
