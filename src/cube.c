@@ -89,6 +89,7 @@ void square(int r)
 
 void draw_cube()
 {
+	glPushMatrix();
 	square(r);
 	glRotatef(90, 0, 1, 0);
 	square(r);
@@ -100,6 +101,7 @@ void draw_cube()
 	square(r);
 	glRotatef(180, 1, 0, 0);
 	square(r);
+	glPopMatrix();
 }
 
 void cube_face(int a, int b, int c, int d)

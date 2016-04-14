@@ -55,7 +55,7 @@ static int originX = -1, originY = -1; // Position of mouse on click
 static GLfloat theta = 0.0, phi = 0.0; // theta - y axis rotation, phi - x axis rotation
 static GLfloat ground_size[4];
 
-GLfloat lightPos0[] = {-100.0f, 2.0f, 4.0f, 1.0f};
+GLfloat lightPos0[] = {0.0f, 2.0f, 4.0f, 1.0f};
 GLfloat lightPos1[] = {-110.0f, 10.0f, 0.0f, 1.0f};
 GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
 GLfloat diffuse[] = {1.0, 1.0, 1.0, 1.0};
@@ -160,7 +160,7 @@ void display(void)
 	//draw_bystander();
 	glPopMatrix();
 
-	draw_text();
+	//draw_text();
 
 	glFlush();
 	glutSwapBuffers();
@@ -389,7 +389,7 @@ void glInit(void)
 
 	initialize_lighting();
 	create_spotlight(lightPos0, ambientLight, diffuse, specular, 15.0, 1000.0, spotDir0);
-	create_spotlight(lightPos1, ambientLight, diffuse, specular, 45.0, 1000.0, spotDir1);
+	//create_spotlight(lightPos1, ambientLight, diffuse, specular, 45.0, 1000.0, spotDir1);
 
 	ground_size[0] = *get_ground_size();
 	ground_size[1] = *(get_ground_size() + 1);

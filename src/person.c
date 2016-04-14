@@ -246,11 +246,13 @@ void draw_head(int skin_color)
 	glTranslatef(0.0, head.scale[1] / 2.0, 0.0);
 	glScalef(head.scale[0], head.scale[1], head.scale[2]);
 	draw_cube();
+	
 	if (isStudent)
 	{
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
 		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 	}
+	
 	glPopMatrix();
 
 	draw_hair();
@@ -720,11 +722,11 @@ void draw_student(void)
 	glRotatef(student.angle[1], 0.0, 1.0, 0.0);
 	draw_body(COLOR_GREEN);
 	draw_head(COLOR_SKIN);
-	draw_left_arm(COLOR_GREEN, COLOR_SKIN);
-	draw_right_arm(COLOR_GREEN, COLOR_SKIN);
-	draw_left_leg(COLOR_BLUE, COLOR_BROWN);
-	draw_right_leg(COLOR_BLUE, COLOR_BROWN);
-	draw_backpack();
+	//draw_left_arm(COLOR_GREEN, COLOR_SKIN);
+	//draw_right_arm(COLOR_GREEN, COLOR_SKIN);
+	//draw_left_leg(COLOR_BLUE, COLOR_BROWN);
+	//draw_right_leg(COLOR_BLUE, COLOR_BROWN);
+	//draw_backpack();
 }
 
 void draw_bystander(void)
