@@ -219,7 +219,7 @@ void draw_face(void)
 	change_color(COLOR_BLACK);
 	glTranslatef(0.0, 2.0, 3.51);
 	glScalef(5.0, 0.25, 1.0);
-	cube_face(4, 5, 6, 7);
+	square(2);
 	glPopMatrix();
 
 	glPopMatrix();
