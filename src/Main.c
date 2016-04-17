@@ -46,9 +46,11 @@
 #include "buildings.h"
 #include "camera.h"
 #include "lighting.h"
+#include "commands.h"
 
 
 static GLfloat ww = 800, wh = 800; // Initial window width and height
+static GLfloat aspect = 1.0;
 static int mode = 0; // 0 - student, 1 - camera
 static int camera_mode = 0; // 0 - Free Cam, 1 - 1st Person
 static int originX = -1, originY = -1; // Position of mouse on click
@@ -101,7 +103,7 @@ void draw_text(void)
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	gluOrtho2D(0.0, 800, 0.0, 800);
+	gluOrtho2D(0.0, glutGet(GLUT_WINDOW_WIDTH), 0.0, 800);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
@@ -115,18 +117,18 @@ void draw_text(void)
 	create_text(1.0, 19.0, "A - Rotate Left");
 	create_text(1.0, 5.0, "D - Rotate Right");
 
-	create_text(683, 103.0, "+/- Change Intensity");
-	create_text(685, 89.0, "L - Toggle Lights");
-	create_text(685, 75.0, "1 - Scale 1.0");
-	create_text(685, 61.0, "2 - Scale 2.0");
-	create_text(685, 47.0, "5 - Scale 0.5");
-	create_text(685, 33.0, "M - Toggle Mode");
-	create_text(685, 19.0, "B - Toggle Bounds");
-	create_text(685, 5.0, "R - Reset Position");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 118, 103.0, "+/- Change Intensity");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 89.0, "L - Toggle Lights");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 75.0, "1 - Scale 1.0");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 61.0, "2 - Scale 2.0");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 47.0, "5 - Scale 0.5");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 33.0, "M - Toggle Mode");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 19.0, "B - Toggle Bounds");
+	create_text(glutGet(GLUT_WINDOW_WIDTH) - 115, 5.0, "R - Reset Position");
 	if (mode == 0)
-		create_text(685, 785, "Mode: Student");
+		create_text(glutGet(GLUT_WINDOW_WIDTH) - 85, 785, "Mode: Student");
 	else
-		create_text(685, 785, "Mode: Camera");
+		create_text(glutGet(GLUT_WINDOW_WIDTH) - 100, 785, "Mode: Camera");
 
 	create_text(1.0, 785.0, get_lighting_mode());
 
@@ -156,7 +158,7 @@ void display(void)
 
 	glPushMatrix();
 	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-	if (daylight_cycle) sun_angle += (0.1);
+	if (daylight_cycle) sun_angle += (0.01);
 	if (sun_angle >= 90.0)
 	{
 		sun_angle = -90.0;
@@ -176,10 +178,12 @@ void display(void)
 	glPopMatrix();
 
 	glPushMatrix();
-	draw_bystander();
+	//draw_bystander();
 	glPopMatrix();
 
-	//draw_text();
+	draw_text();
+
+	if(get_prompt_state()) draw_prompt();
 
 	glFlush();
 	glutSwapBuffers();
@@ -192,7 +196,6 @@ void display(void)
 /// <param name="h">The screen height.</param>
 void myReshape(int w, int h)
 {
-	GLfloat aspect;
 	if (h == 0) h = 1;
 	//cw = w;
 	//ch = h;
@@ -219,7 +222,6 @@ void specialKeys(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-
 		if (!mode) rotate_head(2.0, 0.0);
 		else rotate_camera(0.0, 2.0);
 		break;
@@ -253,99 +255,125 @@ void specialKeys(int key, int x, int y)
 /// <param name="y">The mouse y coordinate.</param>
 void keys(unsigned char key, int x, int y)
 {
-	switch (key)
+	if (!get_prompt_state())
 	{
-	case 'a':
-	case 'A':
-		if (!mode && !camera_mode) rotate_student(0.0, 2.0);
-		else rotate_camera(-2.0, 0.0);
-		break;
-	case 'b':
-	case 'B':
-		toggle_bounds();
-		break;
-	case 'c':
-	case 'C':
-		create_light(lightPos0, ambientLight, ambientLight, specular);
-		break;
-	case 'd':
-	case 'D':
-		if (!mode) rotate_student(0.0, -2.0);
-		else rotate_camera(2.0, 0.0);
-		break;
-	case 'l':
-	case 'L':
-		toggle_lights();
-		break;
-	case 'm':
-	case 'M':
-		mode = !mode;
-		break;
-	case 'r':
-	case 'R':
-		reset_student();
-		reset_camera();
-		break;
-	case 's':
-	case 'S':
-		if (!mode)
+		switch (key)
 		{
-			//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
-			//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
-			//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
+		case 'a':
+		case 'A':
+			if (!mode && !camera_mode) rotate_student(0.0, 2.0);
+			else rotate_camera(-2.0, 0.0);
+			break;
+		case 'b':
+		case 'B':
+			toggle_bounds();
+			break;
+		case 'c':
+		case 'C':
+			create_light(lightPos0, ambientLight, ambientLight, specular);
+			break;
+		case 'd':
+		case 'D':
+			if (!mode) rotate_student(0.0, -2.0);
+			else rotate_camera(2.0, 0.0);
+			break;
+		case 'l':
+		case 'L':
+			toggle_lights();
+			break;
+		case 'm':
+		case 'M':
+			mode = !mode;
+			break;
+		case 'r':
+		case 'R':
+			reset_student();
+			reset_camera();
+			break;
+		case 's':
+		case 'S':
+			if (!mode)
 			{
-				translate_student(-1.0);
+				//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
+				//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
+				//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
+				{
+					translate_student(-1.0);
+				}
 			}
+			else
+			{
+				//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
+				//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
+				//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
+				{
+					translate_camera(-1.0);
+				}
+			}
+			break;
+		case 'w':
+		case 'W':
+			if (!mode)
+			{
+				//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
+				//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
+				//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
+				{
+					translate_student(1.0);
+				}
+			}
+			else
+			{
+				//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
+				//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
+				//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
+				{
+					translate_camera(1.0);
+				}
+			}
+			break;
+		case '1':
+			scale_student(1.0);
+			break;
+		case '2':
+			scale_student(2.0);
+			break;
+		case '5':
+			scale_student(0.5);
+			break;
+		case '=':
+		case '+':
+			change_intensity(0.5);
+			break;
+		case '-':
+		case '_':
+			change_intensity(-0.5);
+			break;
+		case '/':
+			open_command_prompt();
+			write_to_prompt(key);
+			break;
+		default:
+			break;
 		}
+	}
+	else if (key == 27)
+	{
+		close_command_prompt();
+	}
+	else
+	{
+		write_to_prompt(key);
+	}
+	if (key == 13)
+	{
+		if (!get_prompt_state())
+			open_command_prompt();
 		else
 		{
-			//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
-			//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
-			//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
-			{
-				translate_camera(-1.0);
-			}
+			write_to_prompt(key);
+			close_command_prompt();
 		}
-		break;
-	case 'w':
-	case 'W':
-		if (!mode)
-		{
-			//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
-			//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
-			//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
-			{
-				translate_student(1.0);
-			}
-		}
-		else
-		{
-			//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
-			//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
-			//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
-			{
-				translate_camera(1.0);
-			}
-		}
-		break;
-	case '1':
-		scale_student(1.0);
-		break;
-	case '2':
-		scale_student(2.0);
-		break;
-	case '5':
-		scale_student(0.5);
-		break;
-	case '=':
-	case '+':
-		change_intensity(0.5);
-		break;
-	case '-':
-	case '_':
-		change_intensity(-0.5);
-	default:
-		break;
 	}
 
 	glutPostRedisplay();
