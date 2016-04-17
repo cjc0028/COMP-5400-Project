@@ -55,6 +55,8 @@ static int originX = -1, originY = -1; // Position of mouse on click
 static GLfloat theta = 0.0, phi = 0.0; // theta - y axis rotation, phi - x axis rotation
 static GLfloat ground_size[4];
 
+static const GLfloat no_mat[4] = {0.0, 0.0, 0.0, 1.0};
+
 GLfloat lightPos0[] = {0.0f, 2.0f, 4.0f, 1.0f};
 GLfloat lightPos1[] = {-110.0f, 10.0f, 0.0f, 1.0f};
 GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -62,6 +64,14 @@ GLfloat diffuse[] = {1.0, 1.0, 1.0, 1.0};
 GLfloat ambientLight[] = {0.2f, 0.2f, 0.2f, 1.0f};
 GLfloat spotDir0[] = {0.0f, 0.0f, -1.0f};
 GLfloat spotDir1[] = {0.0f, -1.0f, 0.0f};
+
+GLfloat sun_pos[4] = {0.0, 500.0, 0.0, 1.0};
+GLfloat sun_ambient[4] = {0.1, 0.1, 0.0, 1.0};
+GLfloat sun_diffusion[4] = {0.5, 0.5, 0.5, 1.0};
+GLfloat sun_specular[4] = {0.2, 0.2, 0.2, 1.0};
+GLfloat sun_angle = 0.0;
+int daylight_cycle = 1;
+
 
 /// <summary>
 /// Draws text at the specified x and y coordinates.
@@ -146,10 +156,19 @@ void display(void)
 
 	glPushMatrix();
 	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
+	if (daylight_cycle) sun_angle += (0.1);
+	if (sun_angle >= 90.0)
+	{
+		sun_angle = -90.0;
+		toggle_daylight();
+	}
+	glRotatef(sun_angle, 0.0, 0.0, 1.0);
+	glTranslatef(sun_pos[0], sun_pos[1], sun_pos[2]);
+	draw_sun_moon();
 	glPopMatrix();
 
 	glPushMatrix();
-	draw_student();
+	//draw_student();
 	glPopMatrix();
 
 	glPushMatrix();
@@ -157,7 +176,7 @@ void display(void)
 	glPopMatrix();
 
 	glPushMatrix();
-	//draw_bystander();
+	draw_bystander();
 	glPopMatrix();
 
 	//draw_text();
@@ -379,7 +398,8 @@ void mouseButton(int button, int state, int x, int y)
 /// </summary>
 void glInit(void)
 {
-	glClearColor(0.015, 0.463, 0.851, 1.0);
+	//glClearColor(0.015, 0.463, 0.851, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClearDepth(1.0f);
 	myReshape(ww, wh);
 
@@ -388,8 +408,9 @@ void glInit(void)
 	glEnable(GL_NORMALIZE);
 
 	initialize_lighting();
-	create_spotlight(lightPos0, ambientLight, diffuse, specular, 15.0, 1000.0, spotDir0);
-	//create_spotlight(lightPos1, ambientLight, diffuse, specular, 45.0, 1000.0, spotDir1);
+	create_spotlight(lightPos0, ambientLight, diffuse, specular, 15.0, 100.0, spotDir0);
+	create_spotlight(lightPos1, ambientLight, diffuse, specular, 45.0, 1000.0, spotDir1);
+	create_light(sun_pos, sun_ambient, sun_diffusion, sun_specular);
 
 	ground_size[0] = *get_ground_size();
 	ground_size[1] = *(get_ground_size() + 1);
@@ -420,3 +441,4 @@ void main(int argc, char** argv)
 	glutIdleFunc(display);
 	glutMainLoop();
 }
+
