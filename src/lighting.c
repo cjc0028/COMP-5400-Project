@@ -23,16 +23,23 @@ typedef struct Light
 typedef enum LIGHTING_MODE {NO_LIGHTS, ONE_LIGHT, TWO_LIGHTS, ALL_LIGHTS} LIGHTING_MODE;
 LIGHTING_MODE current_lighting_mode = NO_LIGHTS;
 char * current_lighting_text = "ALL LIGHTS";
+
+static int day_or_night = DAY;
+
+static const GLfloat no_mat[4] = { 0.0, 0.0, 0.0, 1.0 };
+
 static Light lights[MAX_LIGHTS];
 static int num_lights = 0;
 static GLfloat global_ambient[4] = { 0.5, 0.5, 0.5, 1.0 };
 GLfloat  specref[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+GLfloat sun_emission[4] = { 0.3, 0.3, 0.3, 1.0 };
+
 void initialize_lighting(void)
 {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
 	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specref);
 	glMaterialf(GL_FRONT, GL_SHININESS, 100.0);
@@ -116,7 +123,7 @@ void change_intensity(GLfloat delta)
 {
 	for (int i = 0; i < num_lights; i++)
 	{
-		if (glIsEnabled(i + 0x4000))
+		if (glIsEnabled(i + 0x4000) && i != 2)
 		{
 			float attr[4] = {0, 0, 0, 0};
 
@@ -132,3 +139,18 @@ void change_intensity(GLfloat delta)
 		}
 	}
 }
+
+void draw_sun_moon(void)
+{
+	if (day_or_night == DAY)
+		glColor3f(1.0, 0.8, 0.0);
+	else
+		glColor3f(0.078, 0.235, 0.706);
+	glMaterialfv(GL_FRONT, GL_EMISSION, sun_emission);
+	glutSolidSphere(5.0, 100, 100);
+	glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+}
+
+void toggle_daylight(void) { day_or_night = !day_or_night; }
+
+int get_day_or_night(void) { return day_or_night; }

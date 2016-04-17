@@ -16,10 +16,6 @@ GLfloat vertices[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -
 						  { -0.5, 0.5, -0.5 },{ -0.5, -0.5, 0.5 },{ 0.5, -0.5, 0.5 },
 						  { 0.5, 0.5, 0.5 },{ -0.5, 0.5, 0.5 } };
 
-GLfloat normals[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -0.5 },
-						 { -0.5, 0.5, -0.5 },{ -0.5, -0.5, 0.5 },{ 0.5, -0.5, 0.5 },
-						 { 0.5, 0.5, 0.5 },{ -0.5, 0.5, 0.5 } };
-
 GLfloat colors[][3] = { { 1.0, 0.80, 0.58 },{ 1.0, 0.0, 0.0 },{ 0.37, 0.15, 0.02 },
 						{ 0.0, 0.5, 0.0 },{ 0.0, 0.0, 0.5 },{ 0.5, 0.5, 0.5 },
 						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 },{ 0.0, 0.0, 0.0 },
@@ -29,7 +25,7 @@ enum color { skin, red, brown, green, blue, gray, white, orange, black, grass };
 static int current_color = skin;
 static int is_bounding_enabled = 0;
 static GLfloat normal[3];
-static const int r = 2;
+static const int r = 3;
 
 void calculate_normal(point a, point b, point c)
 {
@@ -102,39 +98,6 @@ void draw_cube()
 	glRotatef(180, 1, 0, 0);
 	square(r);
 	glPopMatrix();
-}
-
-void cube_face(int a, int b, int c, int d)
-{
-
-	calculate_normal(vertices[a], vertices[b], vertices[d]);
-	calculate_normal(vertices[b], vertices[c], vertices[a]);
-	calculate_normal(vertices[c], vertices[d], vertices[b]);
-	calculate_normal(vertices[d], vertices[a], vertices[c]);
-
-	/* draw a polygon via list of vertices */
-	glColor3fv(colors[current_color]);
-
-	glBegin(GL_POLYGON);
-	glNormal3fv(normal);
-	glVertex3fv(vertices[a]);
-	glNormal3fv(normal);
-	glVertex3fv(vertices[b]);
-	glNormal3fv(normal);
-	glVertex3fv(vertices[c]);
-	glNormal3fv(normal);
-	glVertex3fv(vertices[d]);
-	glEnd();
-}
-
-void cube(void)
-{
-	cube_face(0, 3, 2, 1);
-	cube_face(3, 7, 6, 2);
-	cube_face(0, 4, 7, 3);
-	cube_face(1, 2, 6, 5);
-	cube_face(4, 5, 6, 7);
-	cube_face(0, 1, 5, 4);
 }
 
 void change_color(int x)
