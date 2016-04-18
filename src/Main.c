@@ -219,29 +219,36 @@ void myReshape(int w, int h)
 /// <param name="y">The mouse y coordinate.</param>
 void specialKeys(int key, int x, int y)
 {
-	switch (key)
+	if (!get_prompt_state())
 	{
-	case GLUT_KEY_UP:
-		if (!mode) rotate_head(2.0, 0.0);
-		else rotate_camera(0.0, 2.0);
-		break;
-	case GLUT_KEY_DOWN:
-		if (!mode) rotate_head(-2.0, 0.0);
-		else rotate_camera(0.0, -2.0);
-		break;
-	case GLUT_KEY_RIGHT:
-		if (!mode) rotate_head(0.0, -2.0);
-		else rotate_camera(2.0, 0.0);
-		break;
-	case GLUT_KEY_LEFT:
-		if (!mode) rotate_head(0.0, 2.0);
-		else rotate_camera(-2.0, 0.0);
-		break;
-	case GLUT_KEY_F1:
-		camera_mode = !camera_mode;
-		break;
-	default:
-		break;
+		switch (key)
+		{
+		case GLUT_KEY_UP:
+			if (!mode) rotate_head(2.0, 0.0);
+			else rotate_camera(0.0, 2.0);
+			break;
+		case GLUT_KEY_DOWN:
+			if (!mode) rotate_head(-2.0, 0.0);
+			else rotate_camera(0.0, -2.0);
+			break;
+		case GLUT_KEY_RIGHT:
+			if (!mode) rotate_head(0.0, -2.0);
+			else rotate_camera(2.0, 0.0);
+			break;
+		case GLUT_KEY_LEFT:
+			if (!mode) rotate_head(0.0, 2.0);
+			else rotate_camera(-2.0, 0.0);
+			break;
+		case GLUT_KEY_F1:
+			camera_mode = !camera_mode;
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT) move_cursor(key);
 	}
 
 	glutPostRedisplay();
@@ -371,6 +378,7 @@ void keys(unsigned char key, int x, int y)
 			open_command_prompt();
 		else
 		{
+			write_to_prompt(32);
 			write_to_prompt(key);
 			close_command_prompt();
 		}
