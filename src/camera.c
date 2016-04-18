@@ -24,7 +24,7 @@ Camera camera1 = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
 { 0.0, 0.0 },
-{ 0.5, -0.5, 0.5, -0.5, 0.5, -0.5} };
+{ 0.0, 0.0, 0.0, 0.5, 0.5, 0.5} };
 
 Camera initial_camera = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
@@ -76,6 +76,11 @@ GLfloat * get_camera_up(void)
 GLfloat * get_camera_angle(void)
 {
 	return camera1.angle;
+}
+
+GLfloat * get_camera_bounds(void)
+{
+	return camera1.bounds;
 }
 
 void reset_camera(void)

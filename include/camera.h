@@ -9,6 +9,7 @@ GLfloat * get_camera_position(void);
 GLfloat * get_camera_target(void);
 GLfloat * get_camera_up(void);
 GLfloat * get_camera_angle(void);
+GLfloat * get_camera_bounds(void);
 
 void reset_camera(void);
 void calculate_target(void);
