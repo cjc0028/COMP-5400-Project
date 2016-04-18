@@ -603,6 +603,11 @@ void draw_buildings(void)
 	if (bounds_enabled()) draw_bounds();
 }
 
+GLfloat * get_buildings(void)
+{
+	return buildings;
+}
+
 void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
 {
 	GLfloat newRight = building->posX + deltaX + (scaleX / 2.0);
@@ -620,14 +625,6 @@ void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloa
 	building->bounds[building->num_bounds][5] = newBottom;
 
 	building->num_bounds++;
-
-	/*if (building->right < newRight) building->right = newRight;
-	if (building->left > newLeft) building->left = newLeft;
-	if (building->front < newFront) building->front = newFront;
-	if (building->rear > newRear) building->rear = newRear;
-	if (building->top < newTop) building->top = newTop;
-	if (building->bottom > newBottom) building->bottom = newBottom;*/
-
 }
 
 void draw_bounds(void)
