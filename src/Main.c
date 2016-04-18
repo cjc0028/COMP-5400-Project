@@ -47,6 +47,7 @@
 #include "camera.h"
 #include "lighting.h"
 #include "commands.h"
+#include "collisions.h"
 
 
 static GLfloat ww = 800, wh = 800; // Initial window width and height
@@ -315,6 +316,7 @@ void keys(unsigned char key, int x, int y)
 				//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
 				{
 					translate_camera(-1.0);
+					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(1.0);
 				}
 			}
 			break;
@@ -336,6 +338,7 @@ void keys(unsigned char key, int x, int y)
 				//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
 				{
 					translate_camera(1.0);
+					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(-1.0);
 				}
 			}
 			break;
