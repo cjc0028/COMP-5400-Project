@@ -77,20 +77,7 @@ void draw_prompt(void)
 	glRasterPos2i(2.0, 5.0);
 	for (int i = 0; i < buffer.length; i++)
 	{
-		if (i == selected_buffer_index)
-		{
-			//glPushMatrix();
-			glColor3f(1.0, 1.0, 1.0);
-			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, buffer.string[i]);
-			//glPopMatrix();
-		}
-		else
-		{
-			//glPushMatrix();
-			glColor3f(0.0, 0.0, 0.0);
-			glutBitmapCharacter(GLUT_BITMAP_9_BY_15, buffer.string[i]);
-			//glPopMatrix();
-		}
+		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, buffer.string[i]);
 
 		glRasterPos2i(2.0 + ((i+1) * 9), 4.0);
 	}
@@ -100,8 +87,8 @@ void draw_prompt(void)
 	cursor_pos[0] += (9 * cursor_offset);
 	glBegin(GL_POLYGON);
 		glVertex2f(cursor_pos[0], cursor_pos[1] - 4);
-		glVertex2f(cursor_pos[0] + 9, cursor_pos[1] - 4);
-		glVertex2f(cursor_pos[0] + 9, cursor_pos[1] + 9);
+		glVertex2f(cursor_pos[0] + 1, cursor_pos[1] - 4);
+		glVertex2f(cursor_pos[0] + 1, cursor_pos[1] + 9);
 		glVertex2f(cursor_pos[0], cursor_pos[1] + 9);
 	glEnd();
 
@@ -114,11 +101,11 @@ void draw_prompt(void)
 
 void write_to_prompt(unsigned char c)
 {
-	if (buffer.length > 0 && c == 8)
+	if (buffer.length > 0 && c == 8 && selected_buffer_index != 0)
 	{
-		buffer.string[selected_buffer_index] = '0';
+		buffer.string[selected_buffer_index-1] = '0';
 		buffer.length--;
-		for (int i = selected_buffer_index; i < buffer.length; i++)
+		for (int i = selected_buffer_index-1; i < buffer.length; i++)
 		{
 			buffer.string[i] = buffer.string[i + 1];
 		}
