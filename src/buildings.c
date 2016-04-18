@@ -6,26 +6,18 @@
 #include "buildings.h"
 #include "cube.h"
 
-#define RIGHT 0
-#define LEFT 1
-#define FRONT 2
-#define REAR 3
-#define TOP 4
-#define BOTTOM 5
-
-typedef struct Building
-{
-	GLfloat posX;
-	GLfloat posY;
-	GLfloat posZ;
-	int num_bounds;
-	GLfloat bounds[15][6];                                                 // 0=Right, 1=Left, 2=Front, 3=Rear, 4=Top, 5=Bottom
-} Building;
+#define CENTER_X 0
+#define RADIUS_X 1
+#define CENTER_Z 2
+#define RADIUS_Z 3
+#define CENTER_Y 4
+#define RADIUS_Y 5
 
 void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ);
 void draw_bounds(void);
 
 Building buildings[13];
+static int num_buildings = 0;
 
 GLfloat ground_w = 850, ground_d = 450;
 GLfloat ground_size[4];
@@ -133,7 +125,8 @@ void draw_shelby(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&shelby, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[0] = shelby;
+	buildings[num_buildings++] = shelby;
+	
 	glPopMatrix();
 }
 
@@ -175,7 +168,8 @@ void draw_wiggins(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&wiggins, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[1] = wiggins;
+	buildings[num_buildings++] = wiggins;
+	
 	glPopMatrix();
 }
 
@@ -217,7 +211,8 @@ void draw_woltosz(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&woltosz, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[2] = woltosz;
+	buildings[num_buildings++] = woltosz;
+	
 	glPopMatrix();
 }
 
@@ -252,7 +247,7 @@ void draw_broun(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&broun, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[3] = broun;
+	buildings[num_buildings++] = broun;
 	glPopMatrix();
 }
 
@@ -294,7 +289,7 @@ void draw_lbuilding(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&lbuilding, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[4] = lbuilding;
+	buildings[num_buildings++] = lbuilding;
 	glPopMatrix();
 }
 
@@ -336,7 +331,7 @@ void draw_shops(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&shops, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[5] = shops;
+	buildings[num_buildings++] = shops;
 	glPopMatrix();
 }
 
@@ -357,7 +352,7 @@ void draw_waterplant(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&waterplant, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[6] = waterplant;
+	buildings[num_buildings++] = waterplant;
 	glPopMatrix();
 }
 
@@ -385,7 +380,7 @@ void draw_textile(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&textile, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[7] = textile;
+	buildings[num_buildings++] = textile;
 	glPopMatrix();
 }
 
@@ -420,7 +415,7 @@ void draw_ramsey(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&ramsey, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[8] = ramsey;
+	buildings[num_buildings++] = ramsey;
 	glPopMatrix();
 }
 
@@ -455,7 +450,7 @@ void draw_wilmore(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&wilmore, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[9] = wilmore;
+	buildings[num_buildings++] = wilmore;
 	glPopMatrix();
 }
 
@@ -490,7 +485,7 @@ void draw_ross(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&ross, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[10] = ross;
+	buildings[num_buildings++] = ross;
 	glPopMatrix();
 }
 
@@ -532,7 +527,7 @@ void draw_harbert(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&harbert, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[11] = harbert;
+	buildings[num_buildings++] = harbert;
 	glPopMatrix();
 }
 
@@ -560,7 +555,7 @@ void draw_davis(GLfloat x, GLfloat z)
 	glPopMatrix();
 	calculate_bounds(&davis, deltaX, deltaY, deltaZ, scaleX, scaleY, scaleZ);
 
-	buildings[12] = davis;
+	buildings[num_buildings++] = davis;
 	glPopMatrix();
 }
 
@@ -585,6 +580,7 @@ GLfloat * get_ground_size()
 
 void draw_buildings(void)
 {
+	num_buildings = 0;
 	draw_ground();
 	draw_shelby(-275.0, -125.0);
 	draw_wiggins(-345.0, 15.0);
@@ -603,26 +599,31 @@ void draw_buildings(void)
 	if (bounds_enabled()) draw_bounds();
 }
 
-GLfloat * get_buildings(void)
+Building * get_buildings(void)
 {
 	return buildings;
 }
 
+int get_num_buildings(void)
+{
+	return num_buildings;
+}
+
 void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
 {
-	GLfloat newRight = building->posX + deltaX + (scaleX / 2.0);
-	GLfloat newLeft = building->posX + deltaX - (scaleX / 2.0);
-	GLfloat newFront = building->posZ + deltaZ + (scaleZ / 2.0);
-	GLfloat newRear = building->posZ + deltaZ - (scaleZ / 2.0);
-	GLfloat newTop = building->posY + deltaY + (scaleY / 2.0);
-	GLfloat newBottom = building->posY + deltaY - (scaleY / 2.0);
+	GLfloat center_x = building->posX + deltaX;
+	GLfloat radius_x = (scaleX / 2.0);
+	GLfloat center_z = building->posZ + deltaZ;
+	GLfloat radius_z = (scaleZ / 2.0);
+	GLfloat center_y = building->posY + deltaY;
+	GLfloat radius_y = (scaleY / 2.0);
 
-	building->bounds[building->num_bounds][0] = newRight;
-	building->bounds[building->num_bounds][1] = newLeft;
-	building->bounds[building->num_bounds][2] = newFront;
-	building->bounds[building->num_bounds][3] = newRear;
-	building->bounds[building->num_bounds][4] = newTop;
-	building->bounds[building->num_bounds][5] = newBottom;
+	building->bounds[building->num_bounds][0] = center_x;
+	building->bounds[building->num_bounds][1] = radius_x;
+	building->bounds[building->num_bounds][2] = center_z;
+	building->bounds[building->num_bounds][3] = radius_z;
+	building->bounds[building->num_bounds][4] = center_y;
+	building->bounds[building->num_bounds][5] = radius_y;
 
 	building->num_bounds++;
 }
@@ -633,36 +634,68 @@ void draw_bounds(void)
 	glColor3f(1.0, 0.0, 0.0);
 	glLineWidth(1.0);
 
-	for (int i = 0; i < 13; i++)
+	for (int i = 0; i < num_buildings; i++)
 	{
 		for (int j = 0; j < buildings[i].num_bounds; j++)
 		{
 			glBegin(GL_LINE_LOOP);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][FRONT]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X], 
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y], 
+				       buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X], 
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y], 
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X], 
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y], 
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X], 
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y], 
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
 			glEnd();
 
 			glBegin(GL_LINE_LOOP);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][REAR]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][REAR]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
 			glEnd();
 
 			glBegin(GL_LINE_LOOP);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][REAR]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][REAR]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][REAR]);
-			glVertex3f(buildings[i].bounds[j][RIGHT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][REAR]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] + buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
 			glEnd();
 
 			glBegin(GL_LINE_LOOP);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][REAR]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][BOTTOM], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][FRONT]);
-			glVertex3f(buildings[i].bounds[j][LEFT], buildings[i].bounds[j][TOP], buildings[i].bounds[j][REAR]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+				       buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] - buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] + buildings[i].bounds[j][RADIUS_Z]);
+			glVertex3f(buildings[i].bounds[j][CENTER_X] - buildings[i].bounds[j][RADIUS_X],
+					   buildings[i].bounds[j][CENTER_Y] + buildings[i].bounds[j][RADIUS_Y],
+					   buildings[i].bounds[j][CENTER_Z] - buildings[i].bounds[j][RADIUS_Z]);
 			glEnd();
 		}
 	}
