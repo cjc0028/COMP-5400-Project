@@ -12,8 +12,6 @@ typedef struct Building
 } Building;
 
 void draw_buildings(void);
-void calculate_bounds(struct Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ);
-void draw_bounds(void);
 GLfloat * get_ground_size(void);
 Building * get_buildings(void);
 int get_num_buildings(void);

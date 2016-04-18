@@ -16,7 +16,7 @@
 void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ);
 void draw_bounds(void);
 
-Building buildings[13];
+Building buildings[14];
 static int num_buildings = 0;
 
 GLfloat ground_w = 850, ground_d = 450;
@@ -25,7 +25,7 @@ GLfloat ground_size[4];
 
 void draw_shelby(GLfloat x, GLfloat z)
 {
-	Building shelby = {x, 15.0, z, 0}; /*, x, x, z, z, 15.0, 15.0*/
+	Building shelby = {x, 15.0, z, 0};
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 			scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -132,7 +132,7 @@ void draw_shelby(GLfloat x, GLfloat z)
 
 void draw_wiggins(GLfloat x, GLfloat z)
 {
-	Building wiggins = { x, 15.0, z, 0 }; //x, x, z, z, 15.0, 15.0 };
+	Building wiggins = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -175,7 +175,7 @@ void draw_wiggins(GLfloat x, GLfloat z)
 
 void draw_woltosz(GLfloat x, GLfloat z)
 {
-	Building woltosz = { x, 15.0, z, 0 }; // x, x, z, z, 15.0, 15.0
+	Building woltosz = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -218,7 +218,7 @@ void draw_woltosz(GLfloat x, GLfloat z)
 
 void draw_broun(GLfloat x, GLfloat z)
 {
-	Building broun = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building broun = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -253,7 +253,7 @@ void draw_broun(GLfloat x, GLfloat z)
 
 void draw_lbuilding(GLfloat x, GLfloat z)
 {
-	Building lbuilding = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building lbuilding = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -295,7 +295,7 @@ void draw_lbuilding(GLfloat x, GLfloat z)
 
 void draw_shops(GLfloat x, GLfloat z)
 {
-	Building shops = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building shops = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -337,7 +337,7 @@ void draw_shops(GLfloat x, GLfloat z)
 
 void draw_waterplant(GLfloat x, GLfloat z)
 {
-	Building waterplant = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building waterplant = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -358,7 +358,7 @@ void draw_waterplant(GLfloat x, GLfloat z)
 
 void draw_textile(GLfloat x, GLfloat z)
 {
-	Building textile = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building textile = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -386,7 +386,7 @@ void draw_textile(GLfloat x, GLfloat z)
 
 void draw_ramsey(GLfloat x, GLfloat z)
 {
-	Building ramsey = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building ramsey = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -421,7 +421,7 @@ void draw_ramsey(GLfloat x, GLfloat z)
 
 void draw_wilmore(GLfloat x, GLfloat z)
 {
-	Building wilmore = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building wilmore = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -456,7 +456,7 @@ void draw_wilmore(GLfloat x, GLfloat z)
 
 void draw_ross(GLfloat x, GLfloat z)
 {
-	Building ross = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building ross = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -491,7 +491,7 @@ void draw_ross(GLfloat x, GLfloat z)
 
 void draw_harbert(GLfloat x, GLfloat z)
 {
-	Building harbert = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building harbert = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -533,7 +533,7 @@ void draw_harbert(GLfloat x, GLfloat z)
 
 void draw_davis(GLfloat x, GLfloat z)
 {
-	Building davis = { x, 15.0, z, 0 };//x, x, z, z, 15.0, 15.0 };
+	Building davis = { x, 15.0, z, 0 };
 	GLfloat deltaX = 0.0, deltaY = 0.0, deltaZ = 0.0,
 		scaleX = 1.0, scaleY = 30.0, scaleZ = 1.0;
 
@@ -561,6 +561,7 @@ void draw_davis(GLfloat x, GLfloat z)
 
 void draw_ground(void)
 {
+	Building ground = { 0.0, 0.0, 0.0, 0 };
 	glPushMatrix();
 	change_color(COLOR_GRASS);
 
@@ -570,6 +571,9 @@ void draw_ground(void)
 	square(6);
 
 	glPopMatrix();
+
+	calculate_bounds(&ground, 0.0, 0.0, 0.0, 425.0, 0.0, 225.0);
+	buildings[num_buildings++] = ground;
 }
 
 GLfloat * get_ground_size()
@@ -609,7 +613,7 @@ int get_num_buildings(void)
 	return num_buildings;
 }
 
-void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
+static void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloat deltaZ, GLfloat scaleX, GLfloat scaleY, GLfloat scaleZ)
 {
 	GLfloat center_x = building->posX + deltaX;
 	GLfloat radius_x = (scaleX / 2.0);
@@ -628,7 +632,7 @@ void calculate_bounds(Building *building, GLfloat deltaX, GLfloat deltaY, GLfloa
 	building->num_bounds++;
 }
 
-void draw_bounds(void)
+static void draw_bounds(void)
 {
 	glPushMatrix();
 	glColor3f(1.0, 0.0, 0.0);
