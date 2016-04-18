@@ -39,8 +39,6 @@ void initialize_lighting(void)
 {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
-	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
-	//glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specref);
 	glMaterialf(GL_FRONT, GL_SHININESS, 100.0);
 }
