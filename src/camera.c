@@ -9,24 +9,28 @@
 #define _USE_MATH_DEFINES
 #include<math.h>
 #include<GL/glut.h>
+#include "camera.h"
 
-struct Camera
+typedef struct Camera
 {
 	GLfloat position[3];
 	GLfloat target[3];
 	GLfloat up[3];
 	GLfloat angle[2];
-};
+	GLfloat bounds[6];
+} Camera;
 
-struct Camera camera1 = { { -100.0, 2.95, 10.0 },
+Camera camera1 = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
-{ 0.0, 0.0 } };
+{ 0.0, 0.0 },
+{ 0.5, -0.5, 0.5, -0.5, 0.5, -0.5} };
 
-struct Camera initial_camera = { { -100.0, 2.95, 10.0 },
+Camera initial_camera = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
-{ 0.0, 0.0 } };
+{ 0.0, 0.0 },
+{ 0.5, -0.5, 0.5, -0.5, 0.5, -0.5 } };
 
 void calculate_target(void)
 {
