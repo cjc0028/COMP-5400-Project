@@ -5,7 +5,7 @@
 * Date: 3/1/2016
 * Description: Functions for drawing individual parts of the 3D student
 */
-#define MAX_BYSTANDERS 10
+#define MAX_PEOPLE 10
 #define _USE_MATH_DEFINES
 #include<math.h>
 #include<stdlib.h>
@@ -43,21 +43,9 @@ typedef struct Joints
 
 Joints joints = { { 0.0, 0.0, 0.0 } };
 
-typedef struct Person
-{
-	GLfloat position[4];                                               // X, Y, and Z position
-	GLfloat scale;                                                     // Scale used in all directions
-	GLfloat angle[3];                                                  // [0] - body tilt, [1] - body rotation
-	GLfloat head_angle[3];
-} Person;
-
-Person student = { { -100.0, 1.9, 0.0, 1.0 }, 1.0,{ 0.0, 180.0, 0.0 },{ 0.0, 0.0, 0.0 } };
-int num_bystanders = 0;
-Person bystanders[MAX_BYSTANDERS];
-
-int bystander_colors[4] = { -1, -1, -1, -1 };
-int isStudent = 1;
-
+static int num_people = 0;
+static Person people[MAX_PEOPLE];
+static int selected_person = 0;
 
 Body_Part neck = { { 0.0, 0.0, 0.0 } };
 void draw_neck(int skin_color)
@@ -235,10 +223,10 @@ void draw_head(int skin_color)
 	
 	glPushMatrix();
 	glTranslatef(joints.head_to_neck[0], joints.head_to_neck[1], joints.head_to_neck[2]);
-	if (isStudent)
+	if (people[selected_person].is_student)
 	{
-		glRotatef(head.angle[1] = student.head_angle[1], 0.0, 1.0, 0.0);
-		glRotatef(head.angle[0] = student.head_angle[0], 1.0, 0.0, 0.0);
+		glRotatef(head.angle[1] = people[selected_person].head_angle[1], 0.0, 1.0, 0.0);
+		glRotatef(head.angle[0] = people[selected_person].head_angle[0], 1.0, 0.0, 0.0);
 	}
 	
 	glPushMatrix();
@@ -247,7 +235,7 @@ void draw_head(int skin_color)
 	glScalef(head.scale[0], head.scale[1], head.scale[2]);
 	draw_cube();
 	
-	if (isStudent)
+	if (people[selected_person].is_student)
 	{
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
 		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
@@ -713,81 +701,96 @@ void draw_backpack(void)
 	glPopMatrix();
 }
 
-void draw_student(void)
+void create_student(int skin_color, int shirt_color, int pants_color, int shoe_color)
 {
-	isStudent = 1;
-	glTranslatef(student.position[0], student.position[1] * student.scale, student.position[2]);
-	glScalef(student.scale, student.scale, student.scale);
-	glScalef(0.1, 0.1, 0.1);
-	glRotatef(student.angle[1], 0.0, 1.0, 0.0);
-	draw_body(COLOR_GREEN);
-	draw_head(COLOR_SKIN);
-	draw_left_arm(COLOR_GREEN, COLOR_SKIN);
-	draw_right_arm(COLOR_GREEN, COLOR_SKIN);
-	draw_left_leg(COLOR_BLUE, COLOR_BROWN);
-	draw_right_leg(COLOR_BLUE, COLOR_BROWN);
-	//draw_backpack();
-}
-
-void draw_bystander(void)
-{
-	isStudent = 0;
-
-	if (num_bystanders < MAX_BYSTANDERS)
+	if (num_people < MAX_PEOPLE)
 	{
-		glTranslatef(-100.0, 1.9 * student.scale, 0.0);
-		glScalef(student.scale, student.scale, student.scale);
-		glScalef(0.1, 0.1, 0.1);
-		glRotatef(180, 0.0, 1.0, 0.0);
-
-		for (int i = 0; i < 4; i++)
-			if (bystander_colors[i] == -1) bystander_colors[i] = rand() % 7;
-
-		draw_body(bystander_colors[1]);
-		draw_head(bystander_colors[0]);
-		draw_left_arm(bystander_colors[1], bystander_colors[0]);
-		draw_right_arm(bystander_colors[1], bystander_colors[0]);
-		draw_left_leg(bystander_colors[2], bystander_colors[3]);
-		draw_right_leg(bystander_colors[2], bystander_colors[3]);
-
-		num_bystanders++;
+		Person student = { 1, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { 0.0, 0.0, 0.0 }, {skin_color, shirt_color, pants_color, shoe_color} };
+		people[num_people++] = student;
 	}
 }
 
-void rotate_student(GLfloat phi, GLfloat psi)
+void create_bystander(int skin_color, int shirt_color, int pants_color, int shoe_color)
 {
-	student.angle[0] = (int)(student.angle[0] + phi) % 360;
-	student.angle[1] = (int)(student.angle[1] + psi) % 360;
+	if (num_people < MAX_PEOPLE)
+	{
+		Person bystander = { 0, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { 0.0, 0.0, 0.0 }, { skin_color, shirt_color, pants_color, shoe_color } };
+		people[num_people++] = bystander;
+	}
 }
 
-void translate_student(GLfloat delta)
+void draw_person(void)
 {
-	student.position[0] += delta * sin(student.angle[1] * (M_PI / 180));
-	student.position[2] += delta * cos(student.angle[1] * (M_PI / 180));
+	glTranslatef(people[selected_person].position[0], people[selected_person].position[1], people[selected_person].position[2]);
+	glScalef(people[selected_person].scale, people[selected_person].scale, people[selected_person].scale);
+	glRotatef(people[selected_person].angle[1], 0.0, 1.0, 0.0);
+	glTranslatef(0.0, 18.0, 0.0);
+
+	draw_body(people[selected_person].colors[1]);
+	draw_head(people[selected_person].colors[0]);
+	draw_left_arm(people[selected_person].colors[1], people[selected_person].colors[0]);
+	draw_right_arm(people[selected_person].colors[1], people[selected_person].colors[0]);
+	draw_left_leg(people[selected_person].colors[2], people[selected_person].colors[3]);
+	draw_right_leg(people[selected_person].colors[2], people[selected_person].colors[3]);
+	if (people[selected_person].is_student) draw_backpack();
 }
 
-void scale_student(GLfloat factor)
+void rotate_person(GLfloat phi, GLfloat psi)
 {
-	student.scale = factor;
+	people[selected_person].angle[0] = (int)(people[selected_person].angle[0] + phi) % 360;
+	people[selected_person].angle[1] = (int)(people[selected_person].angle[1] + psi) % 360;
+}
+
+void translate_person(GLfloat delta)
+{
+	people[selected_person].position[0] += delta * sin(people[selected_person].angle[1] * (M_PI / 180));
+	people[selected_person].position[2] += delta * cos(people[selected_person].angle[1] * (M_PI / 180));
+}
+
+void scale_person(GLfloat factor)
+{
+	people[selected_person].scale = factor;
 }
 
 void rotate_head(GLfloat phi, GLfloat psi)
 {
-	if (abs((int)(student.head_angle[0] + phi) % 360) < 45)
-		student.head_angle[0] = (int)(student.head_angle[0] + phi) % 360;
-	if (abs((int)(student.head_angle[1] + psi) % 360) < 90)
-		student.head_angle[1] = (int)(student.head_angle[1] + psi) % 360;
+	if (abs((int)(people[selected_person].head_angle[0] + phi) % 360) < 45)
+		people[selected_person].head_angle[0] = (int)(people[selected_person].head_angle[0] + phi) % 360;
+	if (abs((int)(people[selected_person].head_angle[1] + psi) % 360) < 90)
+		people[selected_person].head_angle[1] = (int)(people[selected_person].head_angle[1] + psi) % 360;
 }
 
 GLfloat * get_position(void)
 {
-	return student.position;
+	return people[selected_person].position;
 }
 
-void reset_student(void)
+void select_person(int person)
 {
-	Person initial_student = { { -100.0, 1.9, 0.0, 1.0 }, 1.0,{ 0.0, 180.0 },{ 0.0, 0.0 } };
-	student = initial_student;
+	if (person < num_people)
+		selected_person = person;
+}
+
+int get_selected_person(void)
+{
+	return selected_person;
+}
+
+Person * get_people(void)
+{
+	return people;
+}
+
+int get_num_people(void)
+{
+	return num_people;
+}
+
+void reset_person(void)
+{
+	Person initial_person = { 1,{ -100.0, 0.0, 0.0, 1.0 }, 1.0,{ 0.0, 180.0 },{ 0.0, 0.0 } };
+	if (!people[selected_person].is_student) initial_person.is_student = 0;
+	people[selected_person] = initial_person;
 	glLoadIdentity();
 }
 
@@ -810,4 +813,9 @@ GLfloat * calculate_joint_location(GLfloat point1_x, GLfloat point1_y, GLfloat p
 	GLfloat joint_location[3] = { joint_x + point2_x, joint_y + point2_y, joint_z + point2_z };
 
 	return joint_location;
+}
+
+void calculate_bounds(void)
+{
+
 }
