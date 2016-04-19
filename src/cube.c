@@ -12,14 +12,12 @@
 
 typedef GLfloat point[3];
 
-GLfloat vertices[][3] = { { -0.5, -0.5, -0.5 },{ 0.5, -0.5, -0.5 },{ 0.5, 0.5, -0.5 },
-						  { -0.5, 0.5, -0.5 },{ -0.5, -0.5, 0.5 },{ 0.5, -0.5, 0.5 },
-						  { 0.5, 0.5, 0.5 },{ -0.5, 0.5, 0.5 } };
+GLfloat vertices[][3] = { { -0.5, -0.5, 0.0 }, { 0.5, -0.5, 0.0 }, { 0.5, 0.5, 0.0 }, { -0.5, 0.5, 0.0 } };
 
 GLfloat colors[][3] = { { 1.0, 0.80, 0.58 },{ 1.0, 0.0, 0.0 },{ 0.37, 0.15, 0.02 },
-						{ 0.0, 0.5, 0.0 },{ 0.0, 0.0, 0.5 },{ 0.5, 0.5, 0.5 },
-						{ 1.0, 1.0, 1.0 },{ 0.94, 0.43, 0.12 },{ 0.0, 0.0, 0.0 },
-						{ 0.0, 0.7, 0.0 }};
+						{ 0.0, 0.5, 0.0 }, { 0.0, 0.0, 0.5 }, { 0.5, 0.5, 0.5 },
+						{ 1.0, 1.0, 1.0 }, { 0.94, 0.43, 0.12 }, { 0.0, 0.0, 0.0 },
+						{ 0.0, 0.7, 0.0 } };
 
 enum color { skin, red, brown, green, blue, gray, white, orange, black, grass };
 static int current_color = skin;
@@ -79,23 +77,44 @@ void square(int r)
 {
 	glColor3fv(colors[current_color]);
 
-	divide_triangle(vertices[4], vertices[5], vertices[7], r);
-	divide_triangle(vertices[5], vertices[6], vertices[7], r);
+	divide_triangle(vertices[0], vertices[1], vertices[3], r);
+	divide_triangle(vertices[1], vertices[2], vertices[3], r);
 }
 
 void draw_cube()
 {
 	glPushMatrix();
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
+	glPopMatrix();
+
+	glPushMatrix();
 	glRotatef(90, 0, 1, 0);
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
-	glRotatef(90, 0, 1, 0);
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(180, 0, 1, 0);
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
-	glRotatef(90, 0, 1, 0);
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(270, 0, 1, 0);
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
+	glPopMatrix();
+
+	glPushMatrix();
 	glRotatef(90, 1, 0, 0);
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
-	glRotatef(180, 1, 0, 0);
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(-90, 1, 0, 0);
+	glTranslatef(0.0, 0.0, 0.5);
 	square(r);
 	glPopMatrix();
 }
