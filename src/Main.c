@@ -49,6 +49,7 @@
 #include "commands.h"
 #include "collisions.h"
 
+#define FPS 30
 
 static GLfloat ww = 800, wh = 800; // Initial window width and height
 static GLfloat aspect = 1.0;
@@ -171,16 +172,18 @@ void display(void)
 	glPopMatrix();
 
 	glPushMatrix();
-	//draw_student();
-	glPopMatrix();
-
-	glPushMatrix();
 	draw_buildings();
 	glPopMatrix();
 
-	glPushMatrix();
-	//draw_bystander();
-	glPopMatrix();
+	for (int i = 0; i < get_num_people(); i++)
+	{
+		int selected = get_selected_person();
+		glPushMatrix();
+		select_person(i);
+		draw_person();
+		glPopMatrix();
+		select_person(selected);
+	}
 
 	draw_text();
 
@@ -269,7 +272,7 @@ void keys(unsigned char key, int x, int y)
 		{
 		case 'a':
 		case 'A':
-			if (!mode && !camera_mode) rotate_student(0.0, 2.0);
+			if (!mode && !camera_mode) rotate_person(0.0, 2.0);
 			else rotate_camera(-2.0, 0.0);
 			break;
 		case 'b':
@@ -282,7 +285,7 @@ void keys(unsigned char key, int x, int y)
 			break;
 		case 'd':
 		case 'D':
-			if (!mode) rotate_student(0.0, -2.0);
+			if (!mode) rotate_person(0.0, -2.0);
 			else rotate_camera(2.0, 0.0);
 			break;
 		case 'l':
@@ -295,25 +298,19 @@ void keys(unsigned char key, int x, int y)
 			break;
 		case 'r':
 		case 'R':
-			reset_student();
+			reset_person();
 			reset_camera();
 			break;
 		case 's':
 		case 'S':
 			if (!mode)
 			{
-				//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
-				//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
-				//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
 				{
-					translate_student(-1.0);
+					translate_person(-1.0);
 				}
 			}
 			else
 			{
-				//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
-				//if ((position[0]-1.0 > ground_size[0]-1.0) && (position[0]-1.0 < ground_size[1]+1.0))
-				//if ((position[2]-1.0 > ground_size[2]-1.0) && (position[2]-1.0 < ground_size[3]+1.0))
 				{
 					translate_camera(-1.0);
 					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(1.0);
@@ -324,18 +321,12 @@ void keys(unsigned char key, int x, int y)
 		case 'W':
 			if (!mode)
 			{
-				//GLfloat position[3] = { *get_position(), *(get_position() + 1), *(get_position() + 2) };
-				//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
-				//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
 				{
-					translate_student(1.0);
+					translate_person(1.0);
 				}
 			}
 			else
 			{
-				//GLfloat position[3] = { *get_camera_position(), *(get_camera_position() + 1), *(get_camera_position() + 2) };
-				//if ((position[0]+1.0 > ground_size[0]-1.0) && (position[0]+1.0 < ground_size[1]+1.0))
-				//if ((position[2]+1.0 > ground_size[2]-1.0) && (position[2]+1.0 < ground_size[3]+1.0))
 				{
 					translate_camera(1.0);
 					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(-1.0);
@@ -343,13 +334,13 @@ void keys(unsigned char key, int x, int y)
 			}
 			break;
 		case '1':
-			scale_student(1.0);
+			scale_person(1.0);
 			break;
 		case '2':
-			scale_student(2.0);
+			scale_person(2.0);
 			break;
 		case '5':
-			scale_student(0.5);
+			scale_person(0.5);
 			break;
 		case '=':
 		case '+':
@@ -432,6 +423,12 @@ void mouseButton(int button, int state, int x, int y)
 	}
 }
 
+void timer(int fps)
+{
+	glutPostRedisplay();
+	glutTimerFunc(1000/fps, timer, fps);
+}
+
 /// <summary>
 /// OpenGL one-time initialization.
 /// </summary>
@@ -451,10 +448,8 @@ void glInit(void)
 	create_spotlight(lightPos1, ambientLight, diffuse, specular, 45.0, 1000.0, spotDir1);
 	create_light(sun_pos, sun_ambient, sun_diffusion, sun_specular);
 
-	ground_size[0] = *get_ground_size();
-	ground_size[1] = *(get_ground_size() + 1);
-	ground_size[2] = *(get_ground_size() + 2);
-	ground_size[3] = *(get_ground_size() + 3);
+	create_student(COLOR_SKIN, COLOR_GREEN, COLOR_BLUE, COLOR_BROWN);
+	create_bystander(COLOR_SKIN, COLOR_BLUE, COLOR_ORANGE, COLOR_BROWN);
 }
 
 /// <summary>
@@ -477,7 +472,8 @@ void main(int argc, char** argv)
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMotion);
 	glutDisplayFunc(display);
-	glutIdleFunc(display);
+	//glutIdleFunc(display);
+	glutTimerFunc(1000, timer, FPS);
 	glutMainLoop();
 }
 
