@@ -19,14 +19,6 @@ GLfloat * calculate_joint_location(GLfloat point1_x, GLfloat point1_y, GLfloat p
 
 enum parts {HEAD, NECK, BODY, LEFT_BICEP, LEFT_FOREARM, RIGHT_BICEP, RIGHT_FOREARM, LEFT_THIGH, LEFT_CALF, RIGHT_THIGH, RIGHT_CALF};
 
-typedef struct Body_Part
-{
-	GLfloat scale[3];
-	GLfloat angle[3];
-}Body_Part;
-
-Body_Part body_part_list[11];
-
 typedef struct Joints
 {
 	GLfloat head_to_neck[3];
@@ -47,23 +39,21 @@ static int num_people = 0;
 static Person people[MAX_PEOPLE];
 static int selected_person = 0;
 
-Body_Part neck = { { 0.0, 0.0, 0.0 } };
 void draw_neck(int skin_color)
 {
-	neck.scale[0] = 4.0, neck.scale[1] = 0.5, neck.scale[2] = 4.0;
+	GLfloat * neck_scale = people[selected_person].body_parts[NECK].scale;
+	GLfloat * neck_angle = people[selected_person].body_parts[NECK].angle;
 
 	glPushMatrix();
 	change_color(skin_color);
 	glTranslatef(joints.neck_to_body[0], joints.neck_to_body[1], joints.neck_to_body[2]);
-	glTranslatef(0.0, neck.scale[1] / 2.0, 0.0);
-	glScalef(neck.scale[0], neck.scale[1], neck.scale[2]);
+	glTranslatef(0.0, neck_scale[1] / 2.0, 0.0);
+	glScalef(neck_scale[0], neck_scale[1], neck_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[NECK] = neck;
-
-	GLfloat * delta = calculate_joint_location(0.0, neck.scale[1], 0.0,
-											   neck.angle[0], neck.angle[1], neck.angle[2],
+	GLfloat * delta = calculate_joint_location(0.0, neck_scale[1], 0.0,
+											   neck_angle[0], neck_angle[1], neck_angle[2],
 											   joints.neck_to_body[0], joints.neck_to_body[1], joints.neck_to_body[2]);
 
 	joints.head_to_neck[0] = delta[0];
@@ -177,35 +167,35 @@ void draw_face(void)
 	glPushMatrix();
 	glPushMatrix();
 	change_color(COLOR_WHITE);
-	glTranslatef(-1.5, 4.1, 3.51);
+	glTranslatef(-1.5, 4.1, 4.01);
 	glScalef(2.0, 1.0, 1.0);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_BLACK);
-	glTranslatef(-1.3, 4.0, 3.52);
+	glTranslatef(-1.3, 4.0, 4.02);
 	glScalef(0.75, 0.75, 1.0);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_WHITE);
-	glTranslatef(1.5, 4.1, 3.51);
+	glTranslatef(1.5, 4.1, 4.01);
 	glScalef(2.0, 1.0, 1.0);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_BLACK);
-	glTranslatef(1.3, 4.0, 3.52);
+	glTranslatef(1.3, 4.0, 4.02);
 	glScalef(0.75, 0.75, 1.0);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
 	change_color(COLOR_BLACK);
-	glTranslatef(0.0, 2.0, 3.51);
+	glTranslatef(0.0, 2.0, 4.01);
 	glScalef(5.0, 0.25, 1.0);
 	square(2);
 	glPopMatrix();
@@ -213,10 +203,11 @@ void draw_face(void)
 	glPopMatrix();
 }
 
-Body_Part head = { { 0.0, 0.0, 0.0 } };
 void draw_head(int skin_color)
 {
-	head.scale[0] = 8.0, head.scale[1] = 8.0, head.scale[2] = 8.0;
+	GLfloat * head_scale = people[selected_person].body_parts[HEAD].scale;
+	GLfloat * head_angle = people[selected_person].body_parts[HEAD].angle;
+
 	GLfloat light_pos[4] = { 0.0, 0.0, 0.0, 1.0};
 	GLfloat spot_dir[3] = {0.0, 0.0, 1.0 };
 	draw_neck(skin_color);
@@ -225,14 +216,14 @@ void draw_head(int skin_color)
 	glTranslatef(joints.head_to_neck[0], joints.head_to_neck[1], joints.head_to_neck[2]);
 	if (people[selected_person].is_student)
 	{
-		glRotatef(head.angle[1] = people[selected_person].head_angle[1], 0.0, 1.0, 0.0);
-		glRotatef(head.angle[0] = people[selected_person].head_angle[0], 1.0, 0.0, 0.0);
+		glRotatef(head_angle[1], 0.0, 1.0, 0.0);
+		glRotatef(head_angle[0], 1.0, 0.0, 0.0);
 	}
 	
 	glPushMatrix();
 	change_color(skin_color);
-	glTranslatef(0.0, head.scale[1] / 2.0, 0.0);
-	glScalef(head.scale[0], head.scale[1], head.scale[2]);
+	glTranslatef(0.0, head_scale[1] / 2.0, 0.0);
+	glScalef(head_scale[0], head_scale[1], head_scale[2]);
 	draw_cube();
 	
 	if (people[selected_person].is_student)
@@ -246,49 +237,45 @@ void draw_head(int skin_color)
 	draw_hair();
 	draw_face();
 	glPopMatrix();
-
-	body_part_list[HEAD] = head;
 }
 
-Body_Part body = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } };
 void draw_body(int shirt_color)
 {
-	body.scale[0] = 8.0, body.scale[1] = 12.0, body.scale[2] = 4.0;
+	GLfloat * body_scale = people[selected_person].body_parts[BODY].scale;
+	GLfloat * body_angle = people[selected_person].body_parts[BODY].angle;
 
 	glPushMatrix();
 	change_color(shirt_color);
-	glScalef(body.scale[0], body.scale[1], body.scale[2]);
+	glScalef(body_scale[0], body_scale[1], body_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[BODY] = body;
-
-	GLfloat * neck_body_joint = calculate_joint_location(0.0, body.scale[1] / 2.0, 0.0, 
-												         body.angle[0], body.angle[1], body.angle[2],
+	GLfloat * neck_body_joint = calculate_joint_location(0.0, body_scale[1] / 2.0, 0.0, 
+												         body_angle[0], body_angle[1], body_angle[2],
 												         0.0, 0.0, 0.0);
 
 	joints.neck_to_body[0] = neck_body_joint[0], joints.neck_to_body[1] = neck_body_joint[1], joints.neck_to_body[2] = neck_body_joint[2];
 
-	GLfloat * left_shoulder_joint = calculate_joint_location(body.scale[0] / 2.0, body.scale[1] / 2.0, 0.0,
-		                                                     body.angle[0], body.angle[1], body.angle[2], 
+	GLfloat * left_shoulder_joint = calculate_joint_location(body_scale[0] / 2.0, body_scale[1] / 2.0, 0.0,
+		                                                     body_angle[0], body_angle[1], body_angle[2], 
 		                                                     0.0, 0.0, 0.0);
 
 	joints.left_shoulder[0] = left_shoulder_joint[0], joints.left_shoulder[1] = left_shoulder_joint[1], joints.left_shoulder[2] = left_shoulder_joint[2];
 	
-	GLfloat * right_shoulder_joint = calculate_joint_location(body.scale[0] / -2.0, body.scale[1] / 2.0, 0.0,
-		                                                      body.angle[0], body.angle[1], body.angle[2],
+	GLfloat * right_shoulder_joint = calculate_joint_location(body_scale[0] / -2.0, body_scale[1] / 2.0, 0.0,
+		                                                      body_angle[0], body_angle[1], body_angle[2],
 		                                                      0.0, 0.0, 0.0);
 
 	joints.right_shoulder[0] = right_shoulder_joint[0], joints.right_shoulder[1] = right_shoulder_joint[1], joints.right_shoulder[2] = right_shoulder_joint[2];
 	
-	GLfloat * left_hip_joint = calculate_joint_location(body.scale[0] / 4.0, body.scale[1] / -2.0, 0.0,
-		                                                body.angle[0], body.angle[1], body.angle[2],
+	GLfloat * left_hip_joint = calculate_joint_location(body_scale[0] / 4.0, body_scale[1] / -2.0, 0.0,
+		                                                body_angle[0], body_angle[1], body_angle[2],
 		                                                0.0, 0.0, 0.0);
 
 	joints.left_hip[0] = left_hip_joint[0], joints.left_hip[1] = left_hip_joint[1], joints.left_hip[2] = left_hip_joint[2];
 	
-	GLfloat * right_hip_joint = calculate_joint_location(body.scale[0] / -4.0, body.scale[1] / -2.0, 0.0,
-		                                                 body.angle[0], body.angle[1], body.angle[2],
+	GLfloat * right_hip_joint = calculate_joint_location(body_scale[0] / -4.0, body_scale[1] / -2.0, 0.0,
+		                                                 body_angle[0], body_angle[1], body_angle[2],
 		                                                 0.0, 0.0, 0.0);
 
 	joints.right_hip[0] = right_hip_joint[0], joints.right_hip[1] = right_hip_joint[1], joints.right_hip[2] = right_hip_joint[2];
@@ -304,48 +291,44 @@ void draw_left_hand(int skin_color)
 	glPopMatrix();
 }
 
-Body_Part left_bicep = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } };
 void draw_left_bicep(int shirt_color)
 {
-	left_bicep.scale[0] = 4.0, left_bicep.scale[1] = 5.0, left_bicep.scale[2] = 4.0;
+	GLfloat * lbicep_scale = people[selected_person].body_parts[LEFT_BICEP].scale;
+	GLfloat * lbicep_angle = people[selected_person].body_parts[LEFT_BICEP].angle;
 
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.left_shoulder[0], joints.left_shoulder[1], joints.left_shoulder[2]);
-	glRotatef(left_bicep.angle[2] = 45, 0.0, 0.0, 1.0);
-	glTranslatef(left_bicep.scale[0] / 2.0, left_bicep.scale[1] / -2.0, 0.0);
-	glScalef(left_bicep.scale[0], left_bicep.scale[1], left_bicep.scale[2]);
+	glRotatef(lbicep_angle[2], 0.0, 0.0, 1.0);
+	glTranslatef(lbicep_scale[0] / 2.0, lbicep_scale[1] / -2.0, 0.0);
+	glScalef(lbicep_scale[0], lbicep_scale[1], lbicep_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[LEFT_BICEP] = left_bicep;
-
-	GLfloat * left_elbow_joint = calculate_joint_location(left_bicep.scale[0] / 2.0, -left_bicep.scale[1], left_bicep.scale[2] / 2.0, 
-		                                                  left_bicep.angle[0], left_bicep.angle[1], left_bicep.angle[2],
+	GLfloat * left_elbow_joint = calculate_joint_location(lbicep_scale[0] / 2.0, -lbicep_scale[1], lbicep_scale[2] / 2.0, 
+		                                                  lbicep_angle[0], lbicep_angle[1], lbicep_angle[2],
 		                                                  joints.left_shoulder[0], joints.left_shoulder[1], joints.left_shoulder[2]);
 
 	joints.left_elbow[0] = left_elbow_joint[0], joints.left_elbow[1] = left_elbow_joint[1], joints.left_elbow[2] = left_elbow_joint[2];
 }
 
-Body_Part left_forearm = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } };
 void draw_left_forearm(int shirt_color, int skin_color)
 {
-	left_forearm.scale[0] = 4.0, left_forearm.scale[1] = 5.0, left_forearm.scale[2] = 4.0;
+	GLfloat * lforearm_scale = people[selected_person].body_parts[LEFT_FOREARM].scale;
+	GLfloat * lforearm_angle = people[selected_person].body_parts[LEFT_FOREARM].angle;
 
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.left_elbow[0], joints.left_elbow[1], joints.left_elbow[2]);
-	glRotatef(left_forearm.angle[2] = left_bicep.angle[2], 0.0, 0.0, 1.0);
-	glRotatef(left_forearm.angle[0] = -15, 1.0, 0.0, 0.0);
+	glRotatef(lforearm_angle[2] = people[selected_person].body_parts[LEFT_BICEP].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(lforearm_angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, -2.5, -2.0);
-	glScalef(left_forearm.scale[0], left_forearm.scale[1], left_forearm.scale[2]);
+	glScalef(lforearm_scale[0], lforearm_scale[1], lforearm_scale[2]);
 	draw_cube();
 	glPopMatrix();
 	draw_left_hand(skin_color);
 	glPopMatrix();
-
-	body_part_list[LEFT_FOREARM] = left_forearm;
 }
 
 void draw_left_arm(int shirt_color, int skin_color)
@@ -358,104 +341,116 @@ void draw_phone(void)
 {
 	glPushMatrix();
 	change_color(COLOR_GRAY);
+	glTranslatef(0.0, -1.0, 0.0);
+	glRotatef(90.0, 0, 1, 0);
+	glRotatef(90.0, 0, 0, 1);
+	glTranslatef(-1.75, 0.0, 0.0);
+
 	glPushMatrix();
-	glTranslatef(0.0, -8.8, -2.0);
-	glRotatef(90, 0.0, 0.0, 1.0);
 	glScalef(3.5, 6.0, 1.0);
 	draw_cube();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-0.2, -8.8, -1.99);
-	glRotatef(90, 0.0, 0.0, 1.0);
+	glTranslatef(0.0, 0.2, 0.51);
 	glScalef(3.0, 5.0, 1.0);
 	change_color(COLOR_WHITE);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -9.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(-1.15, 2.35, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_RED);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -8.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(-0.383, 2.35, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_BROWN);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-2.2, -7.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(0.383, 2.35, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_GRAY);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-1.2, -9.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
-	change_color(COLOR_BLUE);
-	square(2);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-1.2, -8.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(1.15, 2.35, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_ORANGE);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-1.2, -7.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
-	change_color(COLOR_GREEN);
-	square(2);
-	glPopMatrix();
-
-	glPushMatrix();
-	glTranslatef(-0.2, -9.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(-1.15, 1.275, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_BLUE);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -9.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(-0.383, 1.275, 0.52);
+	glScalef(0.5, 0.5, 1.0);
+	change_color(COLOR_ORANGE);
+	square(2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.383, 1.275, 0.52);
+	glScalef(0.5, 0.5, 1.0);
+	change_color(COLOR_GREEN);
+	square(2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(1.15, 1.275, 0.52);
+	glScalef(0.5, 0.5, 1.0);
+	change_color(COLOR_RED);
+	square(2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-1.15, 0.2, 0.52);
+	glScalef(0.5, 0.5, 1.0);
+	change_color(COLOR_BLUE);
+	square(2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-0.383, 0.2, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_GRAY);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -8.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(0.383, 0.2, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_GREEN);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(1.8, -7.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
-	glScalef(0.75, 0.75, 1.0);
+	glTranslatef(1.15, 0.2, 0.52);
+	glScalef(0.5, 0.5, 1.0);
+	change_color(COLOR_BROWN);
+	square(2);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-1.15, -0.875, 0.52);
+	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_ORANGE);
 	square(2);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(2.65, -8.8, -1.98);
-	glRotatef(90, 0.0, 0.0, 1.0);
+	glTranslatef(-0.383, -0.875, 0.52);
 	glScalef(0.5, 0.5, 1.0);
 	change_color(COLOR_BLACK);
 	square(2);
@@ -469,54 +464,52 @@ void draw_right_hand(int skin_color)
 	glPushMatrix();
 	change_color(skin_color);
 	glTranslatef(0.0, -6.0, -2.0);
+	glPushMatrix();
 	glScalef(4.0, 2.0, 4.0);
 	draw_cube();
 	glPopMatrix();
+	draw_phone();
+	glPopMatrix();
 }
 
-Body_Part right_bicep = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_right_bicep(int shirt_color)
 {
-	right_bicep.scale[0] = 4.0, right_bicep.scale[1] = 5.0, right_bicep.scale[2] = 4.0;
+	GLfloat * rbicep_scale = people[selected_person].body_parts[RIGHT_BICEP].scale;
+	GLfloat * rbicep_angle = people[selected_person].body_parts[RIGHT_BICEP].angle;
 
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.right_shoulder[0], joints.right_shoulder[1], joints.right_shoulder[2]);
-	glRotatef(right_bicep.angle[2] = -15, 0.0, 0.0, 1.0);
-	glTranslatef(right_bicep.scale[0] / -2.0, right_bicep.scale[1] / -2.0, 0.0);
-	glScalef(right_bicep.scale[0], right_bicep.scale[1], right_bicep.scale[2]);
+	glRotatef(rbicep_angle[2], 0.0, 0.0, 1.0);
+	glTranslatef(rbicep_scale[0] / -2.0, rbicep_scale[1] / -2.0, 0.0);
+	glScalef(rbicep_scale[0], rbicep_scale[1], rbicep_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[RIGHT_BICEP] = right_bicep;
-
-	GLfloat * right_elbow_joint = calculate_joint_location(right_bicep.scale[0] / -2.0, -right_bicep.scale[1], right_bicep.scale[2] / 2.0,
-		                                                   right_bicep.angle[0], right_bicep.angle[1], right_bicep.angle[2],
+	GLfloat * right_elbow_joint = calculate_joint_location(rbicep_scale[0] / -2.0, -rbicep_scale[1], rbicep_scale[2] / 2.0,
+		                                                   rbicep_angle[0], rbicep_angle[1], rbicep_angle[2],
 		                                                   joints.right_shoulder[0], joints.right_shoulder[1], joints.right_shoulder[2]);
 
 	joints.right_elbow[0] = right_elbow_joint[0], joints.right_elbow[1] = right_elbow_joint[1], joints.right_elbow[2] = right_elbow_joint[2];
 }
 
-Body_Part right_forearm = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_right_forearm(int shirt_color, int skin_color)
 {
-	right_forearm.scale[0] = 4.0, right_forearm.scale[1] = 5.0, right_forearm.scale[2] = 4.0;
+	GLfloat * rforearm_scale = people[selected_person].body_parts[RIGHT_FOREARM].scale;
+	GLfloat * rforearm_angle = people[selected_person].body_parts[RIGHT_FOREARM].angle;
 
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.right_elbow[0], joints.right_elbow[1], joints.right_elbow[2]);
-	glRotatef(right_forearm.angle[2] = right_bicep.angle[2], 0.0, 0.0, 1.0);
-	glRotatef(right_forearm.angle[0] = -90, 1.0, 0.0, 0.0);
+	glRotatef(rforearm_angle[2] = people[selected_person].body_parts[RIGHT_BICEP].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(rforearm_angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, -2.5, -2.0);
-	glScalef(right_forearm.scale[0], right_forearm.scale[1], right_forearm.scale[2]);
+	glScalef(rforearm_scale[0], rforearm_scale[1], rforearm_scale[2]);
 	draw_cube();
 	glPopMatrix();
 	draw_right_hand(skin_color);
-	draw_phone();
 	glPopMatrix();
-
-	body_part_list[RIGHT_FOREARM] = right_forearm;
 }
 
 void draw_right_arm(int shirt_color, int skin_color)
@@ -535,47 +528,43 @@ void draw_left_foot(int shoe_color)
 	glPopMatrix();
 }
 
-Body_Part left_thigh = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_left_thigh(int pants_color)
 {
-	left_thigh.scale[0] = 4.0, left_thigh.scale[1] = 5.0, left_thigh.scale[2] = 4.0;
+	GLfloat * lthigh_scale = people[selected_person].body_parts[LEFT_THIGH].scale;
+	GLfloat * lthigh_angle = people[selected_person].body_parts[LEFT_THIGH].angle;
 
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.left_hip[0], joints.left_hip[1], joints.left_hip[2]);
-	glRotatef(left_thigh.angle[0] = 0, 1.0, 0.0, 0.0);
-	glTranslatef(0.0, left_thigh.scale[1] / -2.0, 0.0);
-	glScalef(left_thigh.scale[0], left_thigh.scale[1], left_thigh.scale[2]);
+	glRotatef(lthigh_angle[0], 1.0, 0.0, 0.0);
+	glTranslatef(0.0, lthigh_scale[1] / -2.0, 0.0);
+	glScalef(lthigh_scale[0], lthigh_scale[1], lthigh_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[LEFT_THIGH] = left_thigh;
-
-	GLfloat * left_knee_joint = calculate_joint_location(0.0, -left_thigh.scale[1], left_thigh.scale[2] / -2.0,
-		                                                 left_thigh.angle[0], left_thigh.angle[1], left_thigh.angle[2],
+	GLfloat * left_knee_joint = calculate_joint_location(0.0, -lthigh_scale[1], lthigh_scale[2] / -2.0,
+		                                                 lthigh_angle[0], lthigh_angle[1], lthigh_angle[2],
 		                                                 joints.left_hip[0], joints.left_hip[1], joints.left_hip[2]);
 
 	joints.left_knee[0] = left_knee_joint[0], joints.left_knee[1] = left_knee_joint[1], joints.left_knee[2] = left_knee_joint[2];
 }
 
-Body_Part left_calf = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_left_calf(int pants_color, int shoe_color)
 {
-	left_calf.scale[0] = 4.0, left_calf.scale[1] = 5.0, left_calf.scale[2] = 4.0;
+	GLfloat * lcalf_scale = people[selected_person].body_parts[LEFT_CALF].scale;
+	GLfloat * lcalf_angle = people[selected_person].body_parts[LEFT_CALF].angle;
 
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.left_knee[0], joints.left_knee[1], joints.left_knee[2]);
-	glRotatef(left_calf.angle[0] = 0.0, 1.0, 0.0, 0.0);
+	glRotatef(lcalf_angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, -2.5, 2.0);
-	glScalef(left_calf.scale[0], left_calf.scale[1], left_calf.scale[2]);
+	glScalef(lcalf_scale[0], lcalf_scale[1], lcalf_scale[2]);
 	draw_cube();
 	glPopMatrix();
 	draw_left_foot(shoe_color);
 	glPopMatrix();
-
-	body_part_list[LEFT_CALF] = left_calf;
 }
 
 void draw_left_leg(int pants_color, int shoe_color)
@@ -594,47 +583,43 @@ void draw_right_foot(int shoe_color)
 	glPopMatrix();
 }
 
-Body_Part right_thigh = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_right_thigh(int pants_color)
 {
-	right_thigh.scale[0] = 4.0, right_thigh.scale[1] = 5.0, right_thigh.scale[2] = 4.0;
+	GLfloat * rthigh_scale = people[selected_person].body_parts[RIGHT_THIGH].scale;
+	GLfloat * rthigh_angle = people[selected_person].body_parts[RIGHT_THIGH].angle;
 
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.right_hip[0], joints.right_hip[1], joints.right_hip[2]);
-	glRotatef(right_thigh.angle[0] = 30, 1.0, 0.0, 0.0);
-	glTranslatef(0.0, right_thigh.scale[1] / -2.0, 0.0);
-	glScalef(right_thigh.scale[0], right_thigh.scale[1], right_thigh.scale[2]);
+	glRotatef(rthigh_angle[0], 1.0, 0.0, 0.0);
+	glTranslatef(0.0, rthigh_scale[1] / -2.0, 0.0);
+	glScalef(rthigh_scale[0], rthigh_scale[1], rthigh_scale[2]);
 	draw_cube();
 	glPopMatrix();
 
-	body_part_list[RIGHT_THIGH] = right_thigh;
-
-	GLfloat * right_knee_joint = calculate_joint_location(0.0, -right_thigh.scale[1], right_thigh.scale[2] / -2.0,
-		                                                  right_thigh.angle[0], right_thigh.angle[1], right_thigh.angle[2],
+	GLfloat * right_knee_joint = calculate_joint_location(0.0, -rthigh_scale[1], rthigh_scale[2] / -2.0,
+		                                                  rthigh_angle[0], rthigh_angle[1], rthigh_angle[2],
 		                                                  joints.right_hip[0], joints.right_hip[1], joints.right_hip[2]);
 
 	joints.right_knee[0] = right_knee_joint[0], joints.right_knee[1] = right_knee_joint[1], joints.right_knee[2] = right_knee_joint[2];
 }
 
-Body_Part right_calf = { { 0.0, 0.0, 0.0 },{ 0.0, 0.0, 0.0 } };
 void draw_right_calf(int pants_color, int shoe_color)
 {
-	right_calf.scale[0] = 4.0, right_calf.scale[1] = 5.0, right_calf.scale[2] = 4.0;
+	GLfloat * rcalf_scale = people[selected_person].body_parts[RIGHT_CALF].scale;
+	GLfloat * rcalf_angle = people[selected_person].body_parts[RIGHT_CALF].angle;
 
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.right_knee[0], joints.right_knee[1], joints.right_knee[2]);
-	glRotatef(right_calf.angle[0] = 60.0, 1.0, 0.0, 0.0);
+	glRotatef(rcalf_angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
-	glTranslatef(0.0, right_calf.scale[1] / -2.0, right_calf.scale[2] / 2.0);
-	glScalef(right_calf.scale[0], right_calf.scale[1], right_calf.scale[2]);
+	glTranslatef(0.0, rcalf_scale[1] / -2.0, rcalf_scale[2] / 2.0);
+	glScalef(rcalf_scale[0], rcalf_scale[1], rcalf_scale[2]);
 	draw_cube();
 	glPopMatrix();
 	draw_right_foot(shoe_color);
 	glPopMatrix();
-
-	body_part_list[RIGHT_CALF] = right_calf;
 }
 
 void draw_right_leg(int pants_color, int shoe_color)
@@ -701,11 +686,48 @@ void draw_backpack(void)
 	glPopMatrix();
 }
 
+void initialize_person(Person * person)
+{
+	Body_Part body = { { 8.0, 12.0, 4.0 },{ 0.0, 0.0, 0.0} };
+	person->body_parts[BODY] = body;
+
+	Body_Part neck = { { 4.0, 0.5, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[NECK] = neck;
+
+	Body_Part head = { { 8.0, 8.0, 8.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[HEAD] = head;
+
+	Body_Part l_bicep = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[LEFT_BICEP] = l_bicep;
+
+	Body_Part r_bicep = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[RIGHT_BICEP] = r_bicep;
+
+	Body_Part l_forearm = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[LEFT_FOREARM] = l_forearm;
+
+	Body_Part r_forearm = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[RIGHT_FOREARM] = r_forearm;
+
+	Body_Part l_thigh = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[LEFT_THIGH] = l_thigh;
+
+	Body_Part l_calf = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[LEFT_CALF] = l_calf;
+
+	Body_Part r_thigh = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[RIGHT_THIGH] = r_thigh;
+
+	Body_Part r_calf = { { 4.0, 5.0, 4.0 },{ 0.0, 0.0, 0.0 } };
+	person->body_parts[RIGHT_CALF] = r_calf;
+}
+
 void create_student(int skin_color, int shirt_color, int pants_color, int shoe_color)
 {
 	if (num_people < MAX_PEOPLE)
 	{
-		Person student = { 1, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { 0.0, 0.0, 0.0 }, {skin_color, shirt_color, pants_color, shoe_color} };
+		Person student = { 1, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, {skin_color, shirt_color, pants_color, shoe_color} };
+		initialize_person(&student);
 		people[num_people++] = student;
 	}
 }
@@ -714,7 +736,8 @@ void create_bystander(int skin_color, int shirt_color, int pants_color, int shoe
 {
 	if (num_people < MAX_PEOPLE)
 	{
-		Person bystander = { 0, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { 0.0, 0.0, 0.0 }, { skin_color, shirt_color, pants_color, shoe_color } };
+		Person bystander = { 0, { -100.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { skin_color, shirt_color, pants_color, shoe_color } };
+		initialize_person(&bystander);
 		people[num_people++] = bystander;
 	}
 }
@@ -754,10 +777,11 @@ void scale_person(GLfloat factor)
 
 void rotate_head(GLfloat phi, GLfloat psi)
 {
-	if (abs((int)(people[selected_person].head_angle[0] + phi) % 360) < 45)
-		people[selected_person].head_angle[0] = (int)(people[selected_person].head_angle[0] + phi) % 360;
-	if (abs((int)(people[selected_person].head_angle[1] + psi) % 360) < 90)
-		people[selected_person].head_angle[1] = (int)(people[selected_person].head_angle[1] + psi) % 360;
+	GLfloat * head_angle = people[selected_person].body_parts[HEAD].angle;
+	if (abs((int)(head_angle[0] + phi) % 360) < 45)
+		head_angle[0] = (int)(head_angle[0] + phi) % 360;
+	if (abs((int)(head_angle[1] + psi) % 360) < 90)
+		head_angle[1] = (int)(head_angle[1] + psi) % 360;
 }
 
 GLfloat * get_position(void)
