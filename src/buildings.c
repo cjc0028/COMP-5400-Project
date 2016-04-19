@@ -19,7 +19,7 @@ void draw_bounds(void);
 Building buildings[14];
 static int num_buildings = 0;
 
-GLfloat ground_w = 850, ground_d = 450;
+GLfloat ground_x = 850, ground_z = 450;
 GLfloat ground_size[4];
 
 
@@ -566,19 +566,18 @@ void draw_ground(void)
 	change_color(COLOR_GRASS);
 
 	glRotatef(-90, 1, 0, 0);
-	glTranslatef(0.0, 0.0, -0.5);
-	glScalef(ground_w, ground_d, 1.0);
+	glScalef(ground_x, ground_z, 1.0);
 	square(6);
 
 	glPopMatrix();
 
-	calculate_bounds(&ground, 0.0, 0.0, 0.0, 425.0, 0.0, 225.0);
+	calculate_bounds(&ground, 0.0, 0.0, 0.0, ground_x, 0.0, ground_z);
 	buildings[num_buildings++] = ground;
 }
 
 GLfloat * get_ground_size()
 {
-	GLfloat ground_size[4] = {-ground_w/2, ground_w/2, -ground_d/2, ground_d/2};
+	GLfloat ground_size[4] = {-ground_x/2, ground_x/2, -ground_z/2, ground_z/2};
 	return ground_size;
 }
 
