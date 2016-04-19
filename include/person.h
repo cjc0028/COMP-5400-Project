@@ -2,14 +2,20 @@
 #ifndef __person_h__
 #define __person_h__
 
+typedef struct Body_Part
+{
+	GLfloat scale[3];
+	GLfloat angle[3];
+}Body_Part;
+
 typedef struct Person
 {
 	int is_student;
 	GLfloat position[4];                                               // X, Y, and Z position
 	GLfloat scale;                                                     // Scale used in all directions
 	GLfloat angle[3];                                                  // [0] - body tilt, [1] - body rotation
-	GLfloat head_angle[3];
 	int colors[4];
+	Body_Part body_parts[11];
 } Person;
 
 void create_student(int skin_color, int shirt_color, int pants_color, int shoe_color);
