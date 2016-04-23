@@ -16,6 +16,7 @@ typedef struct Person
 	GLfloat angle[3];                                                  // [0] - body tilt, [1] - body rotation
 	int colors[4];
 	Body_Part body_parts[11];
+	GLfloat bounds[6];
 } Person;
 
 void create_student(int skin_color, int shirt_color, int pants_color, int shoe_color);
