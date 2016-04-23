@@ -298,8 +298,8 @@ void keys(unsigned char key, int x, int y)
 			break;
 		case 'r':
 		case 'R':
-			reset_person();
 			reset_camera();
+			reset_person();
 			break;
 		case 's':
 		case 'S':
@@ -307,13 +307,14 @@ void keys(unsigned char key, int x, int y)
 			{
 				{
 					translate_person(-1.0);
+					if (collision_detected(get_bounds())) translate_person(1.0);
 				}
 			}
 			else
 			{
 				{
 					translate_camera(-1.0);
-					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(1.0);
+					if (collision_detected(get_camera_bounds())) translate_camera(1.0);
 				}
 			}
 			break;
@@ -323,13 +324,14 @@ void keys(unsigned char key, int x, int y)
 			{
 				{
 					translate_person(1.0);
+					if (collision_detected(get_bounds())) translate_person(-1.0);
 				}
 			}
 			else
 			{
 				{
 					translate_camera(1.0);
-					if (collision_detected(get_camera_position(), get_camera_bounds())) translate_camera(-1.0);
+					if (collision_detected(get_camera_bounds())) translate_camera(-1.0);
 				}
 			}
 			break;
@@ -449,7 +451,7 @@ void glInit(void)
 	create_light(sun_pos, sun_ambient, sun_diffusion, sun_specular);
 
 	create_student(COLOR_SKIN, COLOR_GREEN, COLOR_BLUE, COLOR_BROWN);
-	create_bystander(COLOR_SKIN, COLOR_BLUE, COLOR_ORANGE, COLOR_BROWN);
+	//create_bystander(COLOR_SKIN, COLOR_BLUE, COLOR_ORANGE, COLOR_BROWN);
 }
 
 /// <summary>
@@ -473,7 +475,7 @@ void main(int argc, char** argv)
 	glutMotionFunc(mouseMotion);
 	glutDisplayFunc(display);
 	//glutIdleFunc(display);
-	glutTimerFunc(1000, timer, FPS);
+	//glutTimerFunc(1000, timer, FPS);
 	glutMainLoop();
 }
 
