@@ -7,6 +7,7 @@
 */
 
 #define _USE_MATH_DEFINES
+#include<stdlib.h>
 #include<math.h>
 #include<GL/glut.h>
 #include "camera.h"
@@ -20,31 +21,33 @@ typedef struct Camera
 	GLfloat bounds[6];
 } Camera;
 
-Camera camera1 = { { -100.0, 2.95, 10.0 },
+Camera camera = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
 { 0.0, 0.0 },
-{ 0.0, 0.0, 0.0, 0.5, 0.5, 0.5} };
+{ -100.0, 0.5, 10.0, 0.5, 2.95, 0.5 } };
 
 Camera initial_camera = { { -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
 { 0.0, 0.0 },
-{ 0.5, -0.5, 0.5, -0.5, 0.5, -0.5 } };
+{ -100.0, 0.5, 10.0, 0.5, 2.95, 0.5 } };
 
 void calculate_target(void)
 {
-	camera1.target[0] = camera1.position[0] + sin(camera1.angle[0] * M_PI / 180) * cos(camera1.angle[1] * M_PI / 180);
-	camera1.target[1] = camera1.position[1] + sin(camera1.angle[1] * M_PI / 180);
-	camera1.target[2] = camera1.position[2] - cos(camera1.angle[0] * M_PI / 180) * cos(camera1.angle[1] * M_PI / 180);
+	camera.target[0] = camera.position[0] + sin(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
+	camera.target[1] = camera.position[1] + sin(camera.angle[1] * M_PI / 180);
+	camera.target[2] = camera.position[2] - cos(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
 }
 
 void translate_camera(float delta)
 {
-	camera1.position[0] += delta * sin(camera1.angle[0] * M_PI / 180) * cos(camera1.angle[1] * M_PI / 180);
-	camera1.position[1] += delta * sin(camera1.angle[1] * M_PI / 180);
-	camera1.position[2] += delta * -cos(camera1.angle[0] * M_PI / 180) * cos(camera1.angle[1] * M_PI / 180);
+	camera.position[0] += delta * sin(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
+	camera.position[1] += delta * sin(camera.angle[1] * M_PI / 180);
+	camera.position[2] += delta * -cos(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
 	calculate_target();
+
+	for (int i = 0; i < 3; i++) camera.bounds[i] = camera.position[i];
 }
 
 void rotate_camera(float theta, float phi)
@@ -52,38 +55,38 @@ void rotate_camera(float theta, float phi)
 	theta = (int)theta % 360;
 	phi = (int)phi % 360;
 
-	camera1.angle[0] = (camera1.angle[0] + theta);
-	if (abs(camera1.angle[1] + phi) < 90)
-		camera1.angle[1] = (camera1.angle[1] + phi);
+	camera.angle[0] = (camera.angle[0] + theta);
+	if (abs(camera.angle[1] + phi) < 90)
+		camera.angle[1] = (camera.angle[1] + phi);
 	calculate_target();
 }
 
 GLfloat * get_camera_position(void)
 {
-	return camera1.position;
+	return camera.position;
 }
 
 GLfloat * get_camera_target(void)
 {
-	return camera1.target;
+	return camera.target;
 }
 
 GLfloat * get_camera_up(void)
 {
-	return camera1.up;
+	return camera.up;
 }
 
 GLfloat * get_camera_angle(void)
 {
-	return camera1.angle;
+	return camera.angle;
 }
 
 GLfloat * get_camera_bounds(void)
 {
-	return camera1.bounds;
+	return camera.bounds;
 }
 
 void reset_camera(void)
 {
-	camera1 = initial_camera;
+	camera = initial_camera;
 }
