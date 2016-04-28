@@ -6,12 +6,17 @@
 * Description: Functions for drawing individual parts of the 3D student
 */
 #define MAX_PEOPLE 10
+#define NUM_BODY_PARTS 11
 #define _USE_MATH_DEFINES
 #include<math.h>
+#include<string.h>
+#include<stdarg.h>
+#include<stdio.h>
 #include<stdlib.h>
 #include<GL\glut.h>
 #include "person.h"
-#include "cube.h"
+#include "shapes.h"
+#include "command_processor.h"
 
 GLfloat * calculate_joint_location(GLfloat point1_x, GLfloat point1_y, GLfloat point1_z,
 								   GLfloat phi, GLfloat psi, GLfloat theta,
@@ -20,6 +25,9 @@ static void calculate_bounds(GLfloat * scale, GLfloat * angle, GLfloat * delta);
 static void draw_bounds(void);
 
 enum parts {HEAD, NECK, BODY, LEFT_BICEP, LEFT_FOREARM, RIGHT_BICEP, RIGHT_FOREARM, LEFT_THIGH, LEFT_CALF, RIGHT_THIGH, RIGHT_CALF};
+char * str_parts[NUM_BODY_PARTS] = { "HEAD", "NECK", "BODY", "LEFT_BICEP", 
+									 "LEFT_FOREARM", "RIGHT_BICEP", "RIGHT_FOREARM", 
+									 "LEFT_THIGH", "LEFT_CALF", "RIGHT_THIGH", "RIGHT_CALF"};
 
 typedef struct Joints
 {
@@ -44,7 +52,17 @@ static int selected_person = 0;
 static const GLfloat initial_pos[4] = { -100.0, 18.0, 0.0, 1.0 };
 static const GLfloat initial_angle[3] = { 0.0, 180.0, 0.0 };
 static const GLfloat initial_scale = 0.1;
-GLfloat normal_bounds[6] = { 0.0 };
+
+void initialize_people(void)
+{
+	add_command("person", &person_commands);
+	add_sub_command("person", "help");
+	add_sub_command("person", "list");
+	add_sub_command("person", "create");
+	add_sub_command("person", "select");
+	add_sub_command("person", "set");
+	add_sub_command("person", "remove");
+}
 
 void draw_neck(int skin_color)
 {
@@ -241,6 +259,7 @@ void draw_head(int skin_color)
 	glScalef(head_scale[0], head_scale[1], head_scale[2]);
 	draw_cube();
 	
+
 	if (people[selected_person].is_student)
 	{
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
@@ -319,7 +338,7 @@ void draw_left_hand(int skin_color)
 
 	GLfloat scale[3] = { 4.0, 2.0, 4.0 };
 	GLfloat * angle = people[selected_person].body_parts[LEFT_FOREARM].angle;
-	GLfloat delta[3] = { 0.0, -6.0, -2.0 };
+	GLfloat delta[3] = { 0.0 + joints.left_elbow[0], -6.0 + joints.left_elbow[1], -2.0 + joints.left_elbow[2] };
 
 	calculate_bounds(scale, angle, delta);
 }
@@ -360,9 +379,9 @@ void draw_left_forearm(int shirt_color, int skin_color)
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.left_elbow[0], joints.left_elbow[1], joints.left_elbow[2]);
-	glRotatef(lforearm_angle[2] = people[selected_person].body_parts[LEFT_BICEP].angle[2], 0.0, 0.0, 1.0);
-	glRotatef(lforearm_angle[1], 0.0, 0.0, 1.0);
-	glRotatef(lforearm_angle[0], 1.0, 0.0, 0.0);
+	glRotatef(lforearm_angle[2] + people[selected_person].body_parts[LEFT_BICEP].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(lforearm_angle[1] + people[selected_person].body_parts[LEFT_BICEP].angle[1], 0.0, 1.0, 0.0);
+	glRotatef(lforearm_angle[0] + people[selected_person].body_parts[LEFT_BICEP].angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, lforearm_scale[1] / -2.0, lforearm_scale[2] / -2.0);
 	glScalef(lforearm_scale[0], lforearm_scale[1], lforearm_scale[2]);
@@ -560,9 +579,9 @@ void draw_right_forearm(int shirt_color, int skin_color)
 	glPushMatrix();
 	change_color(shirt_color);
 	glTranslatef(joints.right_elbow[0], joints.right_elbow[1], joints.right_elbow[2]);
-	glRotatef(rforearm_angle[2] = people[selected_person].body_parts[RIGHT_BICEP].angle[2], 0.0, 0.0, 1.0);
-	glRotatef(rforearm_angle[1], 0.0, 1.0, 0.0);
-	glRotatef(rforearm_angle[0], 1.0, 0.0, 0.0);
+	glRotatef(rforearm_angle[2] + people[selected_person].body_parts[RIGHT_BICEP].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(rforearm_angle[1] + people[selected_person].body_parts[RIGHT_BICEP].angle[1], 0.0, 1.0, 0.0);
+	glRotatef(rforearm_angle[0] + people[selected_person].body_parts[RIGHT_BICEP].angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, rforearm_scale[1] / -2.0, rforearm_scale[2] / -2.0);
 	glScalef(rforearm_scale[0], rforearm_scale[1], rforearm_scale[2]);
@@ -635,9 +654,9 @@ void draw_left_calf(int pants_color, int shoe_color)
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.left_knee[0], joints.left_knee[1], joints.left_knee[2]);
-	glRotatef(lcalf_angle[2], 0.0, 0.0, 1.0);
-	glRotatef(lcalf_angle[1], 0.0, 1.0, 0.0);
-	glRotatef(lcalf_angle[0], 1.0, 0.0, 0.0);
+	glRotatef(lcalf_angle[2] + people[selected_person].body_parts[LEFT_THIGH].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(lcalf_angle[1] + people[selected_person].body_parts[LEFT_THIGH].angle[1], 0.0, 1.0, 0.0);
+	glRotatef(lcalf_angle[0] + people[selected_person].body_parts[LEFT_THIGH].angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, lcalf_scale[1] / -2.0, lcalf_scale[2] / 2.0);
 	glScalef(lcalf_scale[0], lcalf_scale[1], lcalf_scale[2]);
@@ -711,9 +730,9 @@ void draw_right_calf(int pants_color, int shoe_color)
 	glPushMatrix();
 	change_color(pants_color);
 	glTranslatef(joints.right_knee[0], joints.right_knee[1], joints.right_knee[2]);
-	glRotatef(rcalf_angle[2], 0.0, 0.0, 1.0);
-	glRotatef(rcalf_angle[1], 0.0, 1.0, 0.0);
-	glRotatef(rcalf_angle[0], 1.0, 0.0, 0.0);
+	glRotatef(rcalf_angle[2] + people[selected_person].body_parts[RIGHT_THIGH].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(rcalf_angle[1] + people[selected_person].body_parts[RIGHT_THIGH].angle[1], 0.0, 1.0, 0.0);
+	glRotatef(rcalf_angle[0] + people[selected_person].body_parts[RIGHT_THIGH].angle[0], 1.0, 0.0, 0.0);
 	glPushMatrix();
 	glTranslatef(0.0, rcalf_scale[1] / -2.0, rcalf_scale[2] / 2.0);
 	glScalef(rcalf_scale[0], rcalf_scale[1], rcalf_scale[2]);
@@ -832,48 +851,276 @@ void initialize_person(Person * person)
 	person->body_parts[RIGHT_CALF] = r_calf;
 }
 
-void create_student(int skin_color, int shirt_color, int pants_color, int shoe_color)
+void create_student(int num_args, ...)
 {
+	Person student = { 1, 0, 1.0, 2.0, { -100.0, 18.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 } };
+	char * skin_color, * shirt_color, * pants_color, * shoe_color;
+
+	student.colors[0] = COLOR_SKIN;
+	student.colors[1] = COLOR_GREEN;
+	student.colors[2] = COLOR_BLUE;
+	student.colors[3] = COLOR_BROWN;
+
+	va_list arguments;
+	va_start(arguments, num_args);
 	if (num_people < MAX_PEOPLE)
 	{
-		Person student = { 1, { -100.0, 18.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, {skin_color, shirt_color, pants_color, shoe_color} };
+		switch (num_args)
+		{
+		case 1:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					student.colors[0] = i;
+					break;
+				}
+			break;
+		case 2:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					student.colors[0] = i;
+					break;
+				}
+
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					student.colors[1] = i;
+					break;
+				}
+			break;
+		case 3:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					student.colors[0] = i;
+					break;
+				}
+
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					student.colors[1] = i;
+					break;
+				}
+
+			pants_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], pants_color) == 0)
+				{
+					student.colors[2] = i;
+					break;
+				}
+			break;
+		case 4:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					student.colors[0] = i;
+					break;
+				}
+
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					student.colors[1] = i;
+					break;
+				}
+
+			pants_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], pants_color) == 0)
+				{
+					student.colors[2] = i;
+					break;
+				}
+
+			shoe_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shoe_color) == 0)
+				{
+					student.colors[3] = i;
+					break;
+				}
+			break;
+		default:
+			break;
+		}
+		va_end(arguments);
+
 		initialize_person(&student);
 		people[num_people++] = student;
 	}
 }
 
-void create_bystander(int skin_color, int shirt_color, int pants_color, int shoe_color)
+void create_bystander(int num_args, ...)
 {
 	if (num_people < MAX_PEOPLE)
 	{
-		Person bystander = { 0, { -100.0, 18.0, 0.0, 1.0 }, 0.1, { 0.0, 180.0, 0.0 }, { skin_color, shirt_color, pants_color, shoe_color } };
+		Person bystander = { 1, 0, 1.0, 2.0,{ -100.0, 18.0, 0.0, 1.0 },{ 0.0, 0.0, 0.0, 1.0 }, 0.1,{ 0.0, 180.0, 0.0 } };
+		char * skin_color, * shirt_color, * pants_color, * shoe_color;
+
+		bystander.colors[0] = COLOR_SKIN;
+		bystander.colors[1] = COLOR_GRAY;
+		bystander.colors[2] = COLOR_BLUE;
+		bystander.colors[3] = COLOR_BLACK;
+
+		va_list arguments;
+		va_start(arguments, num_args);
+		
+		switch (num_args)
+		{
+		case 1:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					bystander.colors[0] = i;
+					break;
+				}
+			break;
+		case 2:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					bystander.colors[0] = i;
+					break;
+				}
+
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					bystander.colors[1] = i;
+					break;
+				}
+			break;
+		case 3:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					bystander.colors[0] = i;
+					break;
+				}
+			
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					bystander.colors[1] = i;
+					break;
+				}
+			
+			pants_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], pants_color) == 0)
+				{
+					bystander.colors[2] = i;
+					break;
+				}
+			break;
+		case 4:
+			skin_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], skin_color) == 0)
+				{
+					bystander.colors[0] = i;
+					break;
+				}
+			
+			shirt_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shirt_color) == 0)
+				{
+					bystander.colors[1] = i;
+					break;
+				}
+			
+			pants_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], pants_color) == 0)
+				{
+					bystander.colors[2] = i;
+					break;
+				}
+			
+			shoe_color = va_arg(arguments, char *);
+			for (int i = 0; i < NUM_COLORS; i++)
+				if (_stricmp(color_text[i], shoe_color) == 0)
+				{
+					bystander.colors[3] = i;
+					break;
+				}
+			break;
+		default:
+			break;
+		}
+		va_end(arguments);
+
 		initialize_person(&bystander);
 		people[num_people++] = bystander;
 	}
 }
 
-void draw_person(void)
+void select_person(int person)
 {
-	people[selected_person].bounds[0] = people[selected_person].position[0];
-	people[selected_person].bounds[1] = 0.0;
-	people[selected_person].bounds[2] = people[selected_person].position[2];
-	people[selected_person].bounds[3] = 0.0;
-	people[selected_person].bounds[4] = people[selected_person].position[1];
-	people[selected_person].bounds[5] = 0.0;
+	if (person >= 0 && person < num_people)
+		selected_person = person;
+}
 
-	glTranslatef(people[selected_person].position[0], people[selected_person].position[1] * people[selected_person].scale, people[selected_person].position[2]);
-	glScalef(people[selected_person].scale, people[selected_person].scale, people[selected_person].scale);
-	glRotatef(people[selected_person].angle[1], 0.0, 1.0, 0.0);
+void remove_person(int person)
+{
+	for (int i = person; i < num_people; i++)
+	{
+		people[i] = people[i + 1];
+	}
+	num_people--;
+}
 
-	draw_body(people[selected_person].colors[1]);
-	draw_head(people[selected_person].colors[0]);
-	draw_left_arm(people[selected_person].colors[1], people[selected_person].colors[0]);
-	draw_right_arm(people[selected_person].colors[1], people[selected_person].colors[0]);
-	draw_left_leg(people[selected_person].colors[2], people[selected_person].colors[3]);
-	draw_right_leg(people[selected_person].colors[2], people[selected_person].colors[3]);
-	if (people[selected_person].is_student) draw_backpack();
+void draw_person(int person)
+{
+	people[person].bounds[0] = people[person].position[0];
+	people[person].bounds[1] = 0.0;
+	people[person].bounds[2] = people[person].position[2];
+	people[person].bounds[3] = 0.0;
+	people[person].bounds[4] = people[person].position[1];
+	people[person].bounds[5] = 0.0;
+
+	glTranslatef(people[person].position[0], people[person].position[1] * people[person].scale, people[person].position[2]);
+	glScalef(people[person].scale, people[person].scale, people[person].scale);
+	glPushMatrix();
+	glRotatef(people[person].angle[2], 0.0, 0.0, 1.0);
+	glRotatef(people[person].angle[1], 0.0, 1.0, 0.0);
+	glRotatef(people[person].angle[0], 1.0, 0.0, 0.0);
+
+	draw_body(people[person].colors[1]);
+	draw_head(people[person].colors[0]);
+	draw_left_arm(people[person].colors[1], people[person].colors[0]);
+	draw_right_arm(people[person].colors[1], people[person].colors[0]);
+	draw_left_leg(people[person].colors[2], people[person].colors[3]);
+	draw_right_leg(people[person].colors[2], people[person].colors[3]);
+	if (people[person].is_student) draw_backpack();
+	glPopMatrix();
 
 	if (bounds_enabled()) draw_bounds();
+	if (person == get_selected_person())
+	{
+		glPushMatrix();
+		glTranslatef(0.0, 17.0, 0.0);
+		glScalef(2.0, 2.0, 2.0);
+		draw_diamond();
+		glPopMatrix();
+	}
 }
 
 void rotate_person(GLfloat phi, GLfloat psi)
@@ -895,6 +1142,12 @@ void scale_person(GLfloat factor)
 	people[selected_person].scale = 0.1 * factor;
 }
 
+void jump(int person)
+{
+	people[person].in_air = 1;
+	people[person].velocity[1] = 15.0;
+}
+
 void rotate_head(GLfloat phi, GLfloat psi)
 {
 	GLfloat * head_angle = people[selected_person].body_parts[HEAD].angle;
@@ -902,6 +1155,95 @@ void rotate_head(GLfloat phi, GLfloat psi)
 		head_angle[0] = (int)(head_angle[0] + phi) % 360;
 	if (abs((int)(head_angle[1] + psi) % 360) < 90)
 		head_angle[1] = (int)(head_angle[1] + psi) % 360;
+}
+
+void set_person_position(int person, int num_args, ...)
+{
+	va_list arguments;
+	va_start(arguments, num_args);
+
+	switch (num_args)
+	{
+	case 1:
+		people[person].position[0] = va_arg(arguments, double);
+		break;
+	case 2:
+		people[person].position[0] = va_arg(arguments, double);
+		people[person].position[1] = va_arg(arguments, double);
+		break;
+	case 3:
+		people[person].position[0] = va_arg(arguments, double);
+		people[person].position[1] = va_arg(arguments, double);
+		people[person].position[2] = va_arg(arguments, double);
+		break;
+	default:
+		break;
+	}
+
+	va_end(arguments);
+}
+
+void set_person_scale(int person, GLfloat scale)
+{
+	people[person].scale = scale;
+}
+
+void set_person_angle(int person, int num_args, ...)
+{
+	va_list arguments;
+	va_start(arguments, num_args);
+
+	switch (num_args)
+	{
+	case 1:
+		people[person].angle[0] = va_arg(arguments, double);
+		break;
+	case 2:
+		people[person].angle[0] = va_arg(arguments, double);
+		people[person].angle[1] = va_arg(arguments, double);
+		break;
+	case 3:
+		people[person].angle[0] = va_arg(arguments, double);
+		people[person].angle[1] = va_arg(arguments, double);
+		people[person].angle[2] = va_arg(arguments, double);
+		break;
+	default:
+		break;
+	}
+
+	va_end(arguments);
+}
+
+void rotate_body_part_angle(int person, char * body_part, int num_args, ...)
+{
+	va_list arguments;
+	va_start(arguments, num_args);
+
+	for (int i = 0; i < NUM_BODY_PARTS; i++)
+	{
+		if (_stricmp(body_part, str_parts[i]) == 0)
+		{
+			switch (num_args)
+			{
+			case 1:
+				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+				break;
+			case 2:
+				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+				people[person].body_parts[i].angle[1] += va_arg(arguments, double);
+				break;
+			case 3:
+				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+				people[person].body_parts[i].angle[1] += va_arg(arguments, double);
+				people[person].body_parts[i].angle[2] += va_arg(arguments, double);
+				break;
+			default:
+				break;
+			}
+			break;
+		}
+	}
+	va_end(arguments);
 }
 
 GLfloat * get_position(void)
@@ -914,12 +1256,6 @@ GLfloat * get_bounds(void)
 	return people[selected_person].bounds;
 }
 
-void select_person(int person)
-{
-	if (person < num_people)
-		selected_person = person;
-}
-
 int get_selected_person(void)
 {
 	return selected_person;
@@ -930,6 +1266,11 @@ Person * get_people(void)
 	return people;
 }
 
+Person get_person(int person)
+{
+	return people[person];
+}
+
 int get_num_people(void)
 {
 	return num_people;
@@ -937,7 +1278,8 @@ int get_num_people(void)
 
 void reset_person(void)
 {
-	for (int i = 0; i < 4; i++) people[selected_person].position[i] = initial_pos[i];
+	for (int i = 0; i < 3; i++) people[selected_person].position[i] = initial_pos[i];
+	for (int i = 0; i < 3; i++) people[selected_person].velocity[i] = 0.0;
 	for (int i = 0; i < 3; i++) people[selected_person].angle[i] = initial_angle[i];
 	for (int i = 0; i < 11; i++)
 		for (int j = 0; j < 3; j++) 
@@ -953,7 +1295,7 @@ GLfloat * calculate_joint_location(GLfloat point1_x, GLfloat point1_y, GLfloat p
 		              point1_y * (-cos(psi * M_PI / 180) * sin(theta * M_PI / 180)) +
 					  point1_z * (sin(psi* M_PI / 180));
 
-	GLfloat joint_y = point1_x * (sin(phi * M_PI / 180) * cos(psi * M_PI / 180) * cos(theta * M_PI / 180) + cos(phi * M_PI / 180) * sin(theta * M_PI / 180)) +
+	GLfloat joint_y = point1_x * (sin(phi * M_PI / 180) * sin(psi * M_PI / 180) * cos(theta * M_PI / 180) + cos(phi * M_PI / 180) * sin(theta * M_PI / 180)) +
 		              point1_y * (-sin(phi * M_PI / 180) * sin(psi * M_PI / 180) * sin(theta * M_PI / 180) + cos(phi * M_PI / 180) * cos(theta * M_PI / 180)) +
 		              point1_z * (-sin(phi * M_PI / 180) * cos(psi * M_PI / 180));
 
@@ -1046,4 +1388,231 @@ static void draw_bounds(void)
 	glEnd();
 
 	glPopMatrix();
+}
+
+static void list_people(void)
+{
+	char str[100] = "List of people:";
+	print_command("");
+	print_command(str);
+
+	for (int i = 0; i < num_people; i++)
+	{
+		sprintf_s(str, 100, "Person %d : ", i);
+		if (people[i].is_student)
+			strcat_s(str, 100, "STUDENT");
+		else
+			strcat_s(str, 100, "BYSTANDER");
+
+		print_command(str);
+	}
+}
+
+void person_commands(int num_args, char * args[])
+{
+	if (num_args == 0) return;
+
+	if (_stricmp(args[1], "help") == 0)
+	{
+		char * sub_commands = get_sub_commands("person");
+		char str[100] = "/person ";
+		int str_length = strlen(str);
+
+		print_command("");
+		print_command("List of person commands:");
+		for (int i = 0; i < get_num_sub_commands(args[0]); i++)
+		{
+			memcpy(str + str_length, sub_commands + (i * 20), 20);
+			print_command(str);
+		}
+	}
+	else if (_stricmp(args[1], "list") == 0)
+	{
+		list_people();
+	}
+	else if (_stricmp(args[1], "create") == 0)
+	{
+		if (num_args > 2 && _stricmp(args[2], "student") == 0)
+		{
+			if (num_args == 3) create_student(1, args[3]);
+			else if (num_args == 4) create_student(2, args[3], args[4]);
+			else if (num_args == 5) create_student(3, args[3], args[4], args[5]);
+			else if (num_args == 6) create_student(4, args[3], args[4], args[5], args[6]);
+			else if (num_args > 6)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Creates a new student with the specified colors");
+				print_command("Colors: skin red brown green blue gray white orange black grass");
+				print_command("\"/person create student skin_color shirt_color pants_color shoe_color\"");
+			}
+			else if (num_args < 3)
+			{
+				print_command("");
+				print_command("Usage: Creates a new student with the specified colors");
+				print_command("Colors: skin red brown green blue gray white orange black grass");
+				print_command("\"/person create student skin_color shirt_color pants_color shoe_color\"");
+			}
+		}
+		else if (num_args > 2 && _stricmp(args[2], "bystander") == 0)
+		{
+			if (num_args == 3) create_bystander(1, args[3]);
+			else if (num_args == 4) create_bystander(2, args[3], args[4]);
+			else if (num_args == 5) create_bystander(3, args[3], args[4], args[5]);
+			else if (num_args == 6) create_bystander(4, args[3], args[4], args[5], args[6]);
+			else if (num_args > 6)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Creates a new bystander with the specified colors");
+				print_command("Colors: skin red brown green blue gray white orange black grass");
+				print_command("\"/person create bystander skin_color shirt_color pants_color shoe_color\"");
+			}
+			else if (num_args < 4)
+			{
+				print_command("");
+				print_command("Usage: Creates a new bystander with the specified colors");
+				print_command("Colors: skin red brown green blue gray white orange black grass");
+				print_command("\"/person create bystander skin_color shirt_color pants_color shoe_color\"");
+			}
+		}
+		else if (num_args <= 2)
+		{
+			print_command("");
+			print_command("Usage: Creates a new student or bystander");
+			print_command("\"/person create [student | bystander]\"");
+		}
+	}
+	else if (_stricmp(args[1], "select") == 0)
+	{
+		if (num_args == 2)
+		{
+			select_person(atoi(args[2]));
+		}
+		else if (num_args < 2)
+		{
+			print_command("");
+			print_command("Usage: Selects a person");
+			print_command("\"/person select (int)person\"");
+		}
+	}
+	else if (_stricmp(args[1], "set") == 0)
+	{
+		if (num_args > 3 && (atoi(args[3]) < 0 || atoi(args[3]) > num_people - 1))
+		{
+			print_command("Invalid person selected");
+			return;
+		}
+		if (num_args >= 2 && _stricmp(args[2], "position") == 0)
+		{
+			if (num_args == 4) set_person_position(atoi(args[3]), 1, atof(args[4]));
+			else if (num_args == 5) set_person_position(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
+			else if (num_args == 6) set_person_position(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
+			else if (num_args > 6)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Sets the position of the specified person");
+				print_command("\"/person set position person x y z\"");
+			}
+			else if (num_args < 4)
+			{
+				print_command("");
+				print_command("Usage: Sets the position of the specified person");
+				print_command("\"/person set position person x y z\"");
+			}
+		}
+		else if (num_args >= 2 && _stricmp(args[2], "angle") == 0)
+		{
+			if (num_args == 4) set_person_angle(atoi(args[3]), 1, atof(args[4]));
+			else if (num_args == 5) set_person_angle(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
+			else if (num_args == 6) set_person_angle(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
+			else if (num_args > 6)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Sets the angle of rotation along the specified axis for the specified person");
+				print_command("\"/person set angle person x_angle y_angle z_angle\"");
+			}
+			else if (num_args < 4)
+			{
+				print_command("");
+				print_command("Usage: Sets the angle of rotation along the specified axis for the specified person");
+				print_command("\"/person set angle person x_angle y_angle z_angle\"");
+			}
+		}
+		else if (num_args >= 2 && _stricmp(args[2], "body_part_angle") == 0)
+		{
+			if (num_args == 5) rotate_body_part_angle(atoi(args[3]), args[4], 1, atof(args[5]));
+			else if (num_args == 6) rotate_body_part_angle(atoi(args[3]), args[4], 2, atof(args[5]), atof(args[6]));
+			else if (num_args == 7) rotate_body_part_angle(atoi(args[3]), args[4], 3, atof(args[5]), atof(args[6]), atof(args[7]));
+			else if (num_args > 7)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Sets the angle of the specified body part of the specified person");
+				print_command("Body Parts: HEAD NECK BODY LEFT_BICEP LEFT_FOREARM"); 
+				print_command("            RIGHT_BICEP RIGHT_FOREARM LEFT_THIGH LEFT_CALF RIGHT_THIGH RIGHT_CALF");
+				print_command("\"/person set body_part_angle person BODY_PART x y z\"");
+			}
+			else if (num_args < 5)
+			{
+				print_command("");
+				print_command("Usage: Sets the angle of the specified body part of the specified person");
+				print_command("Body Parts: HEAD NECK BODY LEFT_BICEP LEFT_FOREARM");
+				print_command("            RIGHT_BICEP RIGHT_FOREARM LEFT_THIGH LEFT_CALF RIGHT_THIGH RIGHT_CALF");
+				print_command("\"/person set body_part_angle person BODY_PART x y z\"");
+			}
+		}
+		else if (num_args >= 2 && _stricmp(args[2], "scale") == 0)
+		{
+			if (num_args == 4) set_person_scale(atoi(args[3]), atof(args[4]));
+			else if (num_args > 4)
+			{
+				print_command("");
+				print_command("Too many arguments!");
+				print_command("Usage: Sets the scale of the specified person");
+				print_command("\"/person set scale person factor\"");
+			}
+			else if (num_args < 4)
+			{
+				print_command("");
+				print_command("Usage: Sets the scale of the specified person");
+				print_command("\"/person set scale person factor\"");
+			}
+		}
+		else if (num_args >= 1)
+		{
+			print_command("");
+			print_command("Usage: Sets an attribute of the specified person");
+			print_command("\"/person set [position | angle | body_part_angle | scale ]\"");
+		}
+	}
+	else if (_stricmp(args[1], "jump") == 0)
+	{
+		if (num_args == 2)
+		{
+			jump(atoi(args[2]));
+		}
+		else if (num_args < 2)
+		{
+			print_command("");
+			print_command("Usage: Removes a person");
+			print_command("\"/person remove (int)person\"");
+		}
+	}
+	else if (_stricmp(args[1], "remove") == 0)
+	{
+		if (num_args == 2)
+		{
+			remove_person(atoi(args[2]));
+		}
+		else if (num_args < 2)
+		{
+			print_command("");
+			print_command("Usage: Removes a person");
+			print_command("\"/person remove (int)person\"");
+		}
+	}
+
 }
