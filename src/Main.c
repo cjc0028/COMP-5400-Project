@@ -182,7 +182,7 @@ void display(void)
 /// </summary>
 static void tour(void)
 {
-	set_camera_position(-100.0, 2.35, -225.0);
+	set_camera_position(3, -100.0, 2.35, -225.0);
 	reset_person();
 	set_person_position(0, 3, -100.0, 18.0, -215.0);
 	open_command_prompt();
@@ -525,6 +525,7 @@ void mouseButton(int button, int state, int x, int y)
 /// <param name="fps">Frame limit for program.</param>
 void timer(int fps)
 {
+	/* Update the position of a person jumping */
 	float t = 0.1;
 	if (get_people()[get_selected_person()].in_air)
 	{
@@ -537,6 +538,7 @@ void timer(int fps)
 		}
 	}
 
+	/* Updates the time of day */
 	if (daylight_cycle) current_time += 1;
 	if (current_time > 8191)
 	{
@@ -551,7 +553,8 @@ void timer(int fps)
 /// <summary>
 /// Handles main program console commands
 /// </summary>
-/// <param name="command">The command to be run.</param>
+/// <param name="num_args">Number of arguments passed in.</param>
+/// <param name="args">Array of string arguments.</param>
 void main_commands(int num_args, char * args[])
 {
 	if (_stricmp(args[0], "clear") == 0)
@@ -636,6 +639,7 @@ void glInit(void)
 	glEnable(GL_NORMALIZE);
 
 	initialize_main_commands();
+	initialize_camera();
 
 	GLfloat lightPos0[] = { 0.0f, 2.0f, 4.0f, 1.0f };
 	GLfloat lightPos1[] = { -100.0f, 10.0f, 0.0f, 1.0f };
