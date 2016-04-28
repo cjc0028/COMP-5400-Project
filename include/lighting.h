@@ -2,13 +2,13 @@
 #ifndef __lighting_h__
 #define __lighting_h__
 
-#define DAY 0
-#define NIGHT 1
+#define DAY 1
+#define NIGHT 0
 
 void initialize_lighting(void);
 
-void create_light(GLfloat position[4], GLfloat ambient[4], GLfloat diffusion[4], GLfloat specular[4]);
-void create_spotlight(GLfloat position[4], GLfloat ambient[4], GLfloat diffusion[4], GLfloat specular[4], GLfloat cutoff, GLfloat exponent, GLfloat direction[4]);
+void create_light(int num_args, ...);
+void create_spotlight(int num_args, ...);
 
 void toggle_lights();
 char * get_lighting_mode(void);
@@ -16,5 +16,9 @@ void change_intensity(GLfloat delta);
 
 void draw_sun_moon(void);
 void toggle_daylight(void);
-int get_day_or_night(void);
+int is_daytime(void);
+
+GLfloat * get_light_position(int light);
+
+void lighting_commands(int num_args, char * args[]);
 #endif //!__lighting_h__
