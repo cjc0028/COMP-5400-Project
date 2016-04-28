@@ -13,8 +13,14 @@
 #define COLOR_BLACK 8
 #define COLOR_GRASS 9
 
+#define NUM_COLORS 10
+
+extern const char * color_text[NUM_COLORS];
+
 void square(int r);
 void draw_cube(void);
+void draw_pyramid(void);
+void draw_diamond(void);
 void change_color(int x);
 void toggle_bounds(void);
 int bounds_enabled(void);
