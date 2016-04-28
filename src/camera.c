@@ -14,6 +14,8 @@
 
 typedef struct Camera
 {
+	int speed;
+	int rotation_speed;
 	GLfloat position[3];
 	GLfloat target[3];
 	GLfloat up[3];
@@ -21,13 +23,15 @@ typedef struct Camera
 	GLfloat bounds[6];
 } Camera;
 
-Camera camera = { { -100.0, 2.95, 10.0 },
+Camera camera = { 1.0, 2.0, 
+{ -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
 { 0.0, 0.0 },
 { -100.0, 0.5, 10.0, 0.5, 2.95, 0.5 } };
 
-Camera initial_camera = { { -100.0, 2.95, 10.0 },
+Camera initial_camera = { 1.0, 2.0,
+{ -100.0, 2.95, 10.0 },
 { -100.0, 2.95, -1.0 },
 { 0.0, 1.0, 0.0 },
 { 0.0, 0.0 },
@@ -40,14 +44,16 @@ void calculate_target(void)
 	camera.target[2] = camera.position[2] - cos(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
 }
 
-void translate_camera(float delta)
+void translate_camera(float speed)
 {
-	camera.position[0] += delta * sin(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
-	camera.position[1] += delta * sin(camera.angle[1] * M_PI / 180);
-	camera.position[2] += delta * -cos(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
+	camera.position[0] += speed * sin(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
+	camera.position[1] += speed * sin(camera.angle[1] * M_PI / 180);
+	camera.position[2] += speed * -cos(camera.angle[0] * M_PI / 180) * cos(camera.angle[1] * M_PI / 180);
 	calculate_target();
 
-	for (int i = 0; i < 3; i++) camera.bounds[i] = camera.position[i];
+	camera.bounds[0] = camera.position[0];
+	camera.bounds[2] = camera.position[2];
+	camera.bounds[4] = camera.position[1];
 }
 
 void rotate_camera(float theta, float phi)
@@ -59,6 +65,41 @@ void rotate_camera(float theta, float phi)
 	if (abs(camera.angle[1] + phi) < 90)
 		camera.angle[1] = (camera.angle[1] + phi);
 	calculate_target();
+}
+
+void elevate_camera(int speed)
+{
+	camera.position[1] += speed;
+	camera.bounds[4] = camera.position[1];
+
+	calculate_target();
+}
+
+void strafe_camera(int speed)
+{
+	camera.position[0] += speed  * cos(camera.angle[0] * M_PI / 180);
+	camera.position[2] += speed  * sin(camera.angle[0] * M_PI / 180);
+	calculate_target();
+
+	camera.bounds[0] = camera.position[0];
+	camera.bounds[2] = camera.position[2];
+}
+
+void set_camera_position(GLfloat x, GLfloat y, GLfloat z)
+{
+	camera.position[0] = x;
+	camera.position[1] = y;
+	camera.position[2] = z;
+}
+
+int get_camera_speed(void)
+{
+	return camera.speed;
+}
+
+int get_camera_rotation_speed(void)
+{
+	return camera.rotation_speed;
 }
 
 GLfloat * get_camera_position(void)
