@@ -7,7 +7,6 @@
 */
 
 #include<GL/glut.h>
-#include<stdio.h>
 #include<math.h>
 #include "buildings.h"
 #include "collisions.h"
@@ -19,7 +18,7 @@ int collision_detected(GLfloat * bounds)
 	Building * building = get_buildings();
 	for (int i = 0; i < num_buildings; i++)
 	{
-		for (int j = 0; j < building->num_bounds; j++)
+  		for (int j = 0; j < building->num_bounds; j++)
 		{
 			collision_x = (fabs(bounds[0] - building->bounds[j][0]) < bounds[1] + building->bounds[j][1]);
 			collision_y = (fabs(bounds[4] - building->bounds[j][4]) < bounds[5] + building->bounds[j][5]);
