@@ -8,8 +8,6 @@ void elevate_camera(int speed);
 void strafe_camera(int speed);
 
 void set_camera_position(GLfloat x, GLfloat y, GLfloat z);
-void toggle_focus(void);
-int is_focused(void);
 void toggle_camera_mode(void);
 
 int get_camera_speed(void);
