@@ -56,7 +56,6 @@
 #include "command_processor.h"
 #include "collisions.h"
 
-
 static GLfloat ww = 800, wh = 800;															// Initial window width and height
 static int window_id;																		// Main window id
 static GLfloat aspect = 1.0;																// Window aspect ratio
@@ -149,18 +148,9 @@ void display(void)
 
 	glLightfv(GL_LIGHT1, GL_POSITION, get_camera_position());
 
-	if (!is_focused())
-		gluLookAt(position[0], position[1], position[2],
-				  target[0], target[1], target[2],
-				  up[0], up[1], up[2]);
-	else
-	{
-		target = get_person(get_selected_person()).position;
-		gluLookAt(position[0], position[1], position[2],
-			target[0], target[1] * get_person(get_selected_person()).scale, target[2],
-			up[0], up[1], up[2]);
-	}
-	
+	gluLookAt(position[0], position[1], position[2],
+				target[0], target[1], target[2],
+				up[0], up[1], up[2]);
 
 	glPushMatrix();
 	glRotatef(current_time * 0.022, 0.0, 0.0, 1.0);
@@ -500,7 +490,6 @@ void mouseMotion(int x, int y)
 		phi = ((y - originY) * 0.01) * 180 / M_PI ;
 		originX = x , originY = y;
 		rotate_camera(theta, -phi);
-		if (is_focused()) translate_camera((x - originX) * 0.1);
 	}
 	glutPostRedisplay();
 }
@@ -694,7 +683,6 @@ void main(int argc, char** argv)
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMotion);
 	glutDisplayFunc(display);
-	//glutIdleFunc(display);
 	glutTimerFunc(1000, timer, FPS);
 	glutMainLoop();
 }
