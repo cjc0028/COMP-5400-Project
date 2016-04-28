@@ -4,7 +4,7 @@
 
 #include<GL\glut.h>
 #include "buildings.h"
-#include "cube.h"
+#include "shapes.h"
 
 #define CENTER_X 0
 #define RADIUS_X 1
