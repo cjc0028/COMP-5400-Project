@@ -235,7 +235,7 @@ void draw_face(void)
 	glPopMatrix();
 }
 
-void draw_head(int skin_color)
+void draw_head(int skin_color, int person)
 {
 	GLfloat * head_scale = people[selected_person].body_parts[HEAD].scale;
 	GLfloat * head_angle = people[selected_person].body_parts[HEAD].angle;
@@ -246,7 +246,7 @@ void draw_head(int skin_color)
 	
 	glPushMatrix();
 	glTranslatef(joints.head_to_neck[0], joints.head_to_neck[1], joints.head_to_neck[2]);
-	if (people[selected_person].is_student)
+	if (person == selected_person)
 	{
 		glRotatef(head_angle[2], 0.0, 0.0, 1.0);
 		glRotatef(head_angle[1], 0.0, 1.0, 0.0);
@@ -260,7 +260,7 @@ void draw_head(int skin_color)
 	draw_cube();
 	
 
-	if (people[selected_person].is_student)
+	if (person == 0)
 	{
 		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_dir);
 		glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
@@ -965,7 +965,7 @@ void create_bystander(int num_args, ...)
 {
 	if (num_people < MAX_PEOPLE)
 	{
-		Person bystander = { 1, 0, 1.0, 2.0,{ -100.0, 18.0, 0.0, 1.0 },{ 0.0, 0.0, 0.0, 1.0 }, 0.1,{ 0.0, 180.0, 0.0 } };
+		Person bystander = { 0, 0, 1.0, 2.0,{ -100.0, 18.0, 0.0, 1.0 },{ 0.0, 0.0, 0.0, 1.0 }, 0.1,{ 0.0, 180.0, 0.0 } };
 		char * skin_color, * shirt_color, * pants_color, * shoe_color;
 
 		bystander.colors[0] = COLOR_SKIN;
@@ -1074,52 +1074,72 @@ void create_bystander(int num_args, ...)
 
 void select_person(int person)
 {
-	if (person >= 0 && person < num_people)
+	if (person < 0 || person > num_people)
+	{
+		print_command("Invalid person selected!");
+	}
+	else
+	{
 		selected_person = person;
+	}
 }
 
 void remove_person(int person)
 {
-	for (int i = person; i < num_people; i++)
+	if (person < 0 || person > num_people)
 	{
-		people[i] = people[i + 1];
+		print_command("Invalid person selected!");
 	}
-	num_people--;
+	else
+	{
+		for (int i = person; i < num_people; i++)
+		{
+			people[i] = people[i + 1];
+		}
+		num_people--;
+	}
 }
 
 void draw_person(int person)
 {
-	people[person].bounds[0] = people[person].position[0];
-	people[person].bounds[1] = 0.0;
-	people[person].bounds[2] = people[person].position[2];
-	people[person].bounds[3] = 0.0;
-	people[person].bounds[4] = people[person].position[1];
-	people[person].bounds[5] = 0.0;
-
-	glTranslatef(people[person].position[0], people[person].position[1] * people[person].scale, people[person].position[2]);
-	glScalef(people[person].scale, people[person].scale, people[person].scale);
-	glPushMatrix();
-	glRotatef(people[person].angle[2], 0.0, 0.0, 1.0);
-	glRotatef(people[person].angle[1], 0.0, 1.0, 0.0);
-	glRotatef(people[person].angle[0], 1.0, 0.0, 0.0);
-
-	draw_body(people[person].colors[1]);
-	draw_head(people[person].colors[0]);
-	draw_left_arm(people[person].colors[1], people[person].colors[0]);
-	draw_right_arm(people[person].colors[1], people[person].colors[0]);
-	draw_left_leg(people[person].colors[2], people[person].colors[3]);
-	draw_right_leg(people[person].colors[2], people[person].colors[3]);
-	if (people[person].is_student) draw_backpack();
-	glPopMatrix();
-
-	if (bounds_enabled()) draw_bounds();
-	if (person == get_selected_person())
+	if (person < 0 || person > num_people)
 	{
+		print_command("Invalid person selected!");
+	}
+	else
+	{
+		people[person].bounds[0] = people[person].position[0];
+		people[person].bounds[1] = 0.0;
+		people[person].bounds[2] = people[person].position[2];
+		people[person].bounds[3] = 0.0;
+		people[person].bounds[4] = people[person].position[1];
+		people[person].bounds[5] = 0.0;
+
+		glTranslatef(people[person].position[0], people[person].position[1] * people[person].scale, people[person].position[2]);
+		glScalef(people[person].scale, people[person].scale, people[person].scale);
 		glPushMatrix();
-		glTranslatef(0.0, 17.0, 0.0);
-		glScalef(2.0, 2.0, 2.0);
-		draw_diamond();
+		glRotatef(people[person].angle[2], 0.0, 0.0, 1.0);
+		glRotatef(people[person].angle[1], 0.0, 1.0, 0.0);
+		glRotatef(people[person].angle[0], 1.0, 0.0, 0.0);
+
+		draw_body(people[person].colors[1]);
+		draw_head(people[person].colors[0], person);
+		draw_left_arm(people[person].colors[1], people[person].colors[0]);
+		draw_right_arm(people[person].colors[1], people[person].colors[0]);
+		draw_left_leg(people[person].colors[2], people[person].colors[3]);
+		draw_right_leg(people[person].colors[2], people[person].colors[3]);
+		if (people[person].is_student) draw_backpack();
 		glPopMatrix();
+
+		if (bounds_enabled()) draw_bounds();
+		if (person == get_selected_person())
+		{
+			glPushMatrix();
+			glTranslatef(0.0, 17.0, 0.0);
+			glScalef(2.0, 2.0, 2.0);
+			draw_diamond();
+			glPopMatrix();
+		}
 	}
 }
 
@@ -1144,8 +1164,15 @@ void scale_person(GLfloat factor)
 
 void jump(int person)
 {
-	people[person].in_air = 1;
-	people[person].velocity[1] = 15.0;
+	if (person < 0 || person > num_people)
+	{
+		print_command("ERROR: Invalid person selected!");
+	}
+	else
+	{
+		people[person].in_air = 1;
+		people[person].velocity[1] = 15.0;
+	}
 }
 
 void rotate_head(GLfloat phi, GLfloat psi)
@@ -1159,91 +1186,139 @@ void rotate_head(GLfloat phi, GLfloat psi)
 
 void set_person_position(int person, int num_args, ...)
 {
-	va_list arguments;
-	va_start(arguments, num_args);
-
-	switch (num_args)
+	if (person < 0 || person > num_people)
 	{
-	case 1:
-		people[person].position[0] = va_arg(arguments, double);
-		break;
-	case 2:
-		people[person].position[0] = va_arg(arguments, double);
-		people[person].position[1] = va_arg(arguments, double);
-		break;
-	case 3:
-		people[person].position[0] = va_arg(arguments, double);
-		people[person].position[1] = va_arg(arguments, double);
-		people[person].position[2] = va_arg(arguments, double);
-		break;
-	default:
-		break;
+		print_command("ERROR: Invalid person selected!");
 	}
+	else
+	{
+		va_list arguments;
+		va_start(arguments, num_args);
 
-	va_end(arguments);
+		switch (num_args)
+		{
+		case 1:
+			people[person].position[0] = va_arg(arguments, double);
+			break;
+		case 2:
+			people[person].position[0] = va_arg(arguments, double);
+			people[person].position[1] = va_arg(arguments, double);
+			break;
+		case 3:
+			people[person].position[0] = va_arg(arguments, double);
+			people[person].position[1] = va_arg(arguments, double);
+			people[person].position[2] = va_arg(arguments, double);
+			break;
+		default:
+			break;
+		}
+
+		va_end(arguments);
+
+		char str[100];
+		sprintf_s(str, 50, "Set position of person %i to %.1f, %.1f, %.1f", person, people[person].position[0], people[person].position[1], people[person].position[2]);
+		print_command(str);
+	}
 }
 
 void set_person_scale(int person, GLfloat scale)
 {
-	people[person].scale = scale;
+	if (person < 0 || person > num_people)
+	{
+		print_command("ERROR: Invalid person selected!");
+	}
+	else if (scale < 0)
+	{
+		print_command("ERROR: Scale can't be smaller than 0!");
+	}
+	else
+	{
+		people[person].scale = scale;
+
+		char str[100];
+		sprintf_s(str, 50, "Set scale of person %i to %.1f", person, people[person].scale);
+		print_command(str);
+	}
 }
 
 void set_person_angle(int person, int num_args, ...)
 {
-	va_list arguments;
-	va_start(arguments, num_args);
-
-	switch (num_args)
+	
+	if (person < 0 || person > num_people)
 	{
-	case 1:
-		people[person].angle[0] = va_arg(arguments, double);
-		break;
-	case 2:
-		people[person].angle[0] = va_arg(arguments, double);
-		people[person].angle[1] = va_arg(arguments, double);
-		break;
-	case 3:
-		people[person].angle[0] = va_arg(arguments, double);
-		people[person].angle[1] = va_arg(arguments, double);
-		people[person].angle[2] = va_arg(arguments, double);
-		break;
-	default:
-		break;
+		print_command("ERROR: Invalid person selected!");
 	}
+	else
+	{
+		va_list arguments;
+		va_start(arguments, num_args);
 
-	va_end(arguments);
+		switch (num_args)
+		{
+		case 1:
+			people[person].angle[0] = va_arg(arguments, double);
+			break;
+		case 2:
+			people[person].angle[0] = va_arg(arguments, double);
+			people[person].angle[1] = va_arg(arguments, double);
+			break;
+		case 3:
+			people[person].angle[0] = va_arg(arguments, double);
+			people[person].angle[1] = va_arg(arguments, double);
+			people[person].angle[2] = va_arg(arguments, double);
+			break;
+		default:
+			break;
+		}
+
+		va_end(arguments);
+	}
 }
 
 void rotate_body_part_angle(int person, char * body_part, int num_args, ...)
 {
-	va_list arguments;
-	va_start(arguments, num_args);
-
-	for (int i = 0; i < NUM_BODY_PARTS; i++)
+	if (person < 0 || person > num_people)
 	{
-		if (_stricmp(body_part, str_parts[i]) == 0)
-		{
-			switch (num_args)
-			{
-			case 1:
-				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
-				break;
-			case 2:
-				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
-				people[person].body_parts[i].angle[1] += va_arg(arguments, double);
-				break;
-			case 3:
-				people[person].body_parts[i].angle[0] += va_arg(arguments, double);
-				people[person].body_parts[i].angle[1] += va_arg(arguments, double);
-				people[person].body_parts[i].angle[2] += va_arg(arguments, double);
-				break;
-			default:
-				break;
-			}
-			break;
-		}
+		print_command("ERROR: Invalid person selected!");
 	}
-	va_end(arguments);
+	else
+	{
+		va_list arguments;
+		va_start(arguments, num_args);
+
+		for (int i = 0; i < NUM_BODY_PARTS; i++)
+		{
+			if (_stricmp(body_part, str_parts[i]) == 0)
+			{
+				switch (num_args)
+				{
+				case 1:
+					people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+					break;
+				case 2:
+					people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+					people[person].body_parts[i].angle[1] += va_arg(arguments, double);
+					break;
+				case 3:
+					people[person].body_parts[i].angle[0] += va_arg(arguments, double);
+					people[person].body_parts[i].angle[1] += va_arg(arguments, double);
+					people[person].body_parts[i].angle[2] += va_arg(arguments, double);
+					break;
+				default:
+					break;
+				}
+				va_end(arguments);
+
+				char str[100];
+				sprintf_s(str, 50, "Set %s angle of person %i to %.1f, %.1f, %.1f", body_part, person, people[person].body_parts[i].angle[0], 
+																									   people[person].body_parts[i].angle[1], 
+																									   people[person].body_parts[i].angle[2]);
+				print_command(str);
+				return;
+			}
+		}
+		print_command("ERROR: Invalid body part selected!");
+	}
 }
 
 GLfloat * get_position(void)
@@ -1268,7 +1343,15 @@ Person * get_people(void)
 
 Person get_person(int person)
 {
-	return people[person];
+	if (person < 0 || person > num_people)
+	{
+		print_command("Invalid person selected!");
+		return people[selected_person];
+	}
+	else
+	{
+		return people[person];
+	}
 }
 
 int get_num_people(void)
@@ -1410,9 +1493,178 @@ static void list_people(void)
 
 void person_commands(int num_args, char * args[])
 {
-	if (num_args == 0) return;
+	if (num_args > 0)
+	{
+		if (_stricmp(args[1], "list") == 0)
+		{
+			list_people();
+		}
+		else if (_stricmp(args[1], "create") == 0)
+		{
+			if (num_args >= 2)
+			{
+				if (_stricmp(args[2], "student") == 0)
+				{
+					if (num_args == 2) create_student(0);
+					else if (num_args == 3) create_student(1, args[3]);
+					else if (num_args == 4) create_student(2, args[3], args[4]);
+					else if (num_args == 5) create_student(3, args[3], args[4], args[5]);
+					else if (num_args == 6) create_student(4, args[3], args[4], args[5], args[6]);
+					else
+					{
+						print_command("");
+						print_command("Usage: Creates a new student with the specified colors");
+						print_command("Colors: skin red brown green blue gray white orange black grass");
+						print_command("\"/person create student [skin_color shirt_color pants_color shoe_color]\"");
+					}
+				}
+				else if (_stricmp(args[2], "bystander") == 0)
+				{
+					if (num_args == 2) create_bystander(0);
+					else if (num_args == 3) create_bystander(1, args[3]);
+					else if (num_args == 4) create_bystander(2, args[3], args[4]);
+					else if (num_args == 5) create_bystander(3, args[3], args[4], args[5]);
+					else if (num_args == 6) create_bystander(4, args[3], args[4], args[5], args[6]);
+					else
+					{
+						print_command("");
+						print_command("Usage: Creates a new bystander with the specified colors");
+						print_command("Colors: skin red brown green blue gray white orange black grass");
+						print_command("\"/person create bystander skin_color shirt_color pants_color shoe_color\"");
+					}
+				}
+				else
+				{
+					print_command("");
+					print_command("Usage: Creates a new student or bystander");
+					print_command("\"/person create [student | bystander]\"");
+				}
+			}
+			else
+			{
+				print_command("");
+				print_command("Usage: Creates a new student or bystander");
+				print_command("\"/person create [student | bystander]\"");
+			}
+		}
+		else if (_stricmp(args[1], "select") == 0)
+		{
+			if (num_args == 2) select_person(atoi(args[2]));
+			else
+			{
+				print_command("");
+				print_command("Usage: Selects a person");
+				print_command("\"/person select <person>\"");
+			}
+		}
+		else if (_stricmp(args[1], "set") == 0)
+		{
+			if (num_args >= 2)
+			{
+				if (_stricmp(args[2], "position") == 0)
+				{
+					if (num_args == 4) set_person_position(atoi(args[3]), 1, atof(args[4]));
+					else if (num_args == 5) set_person_position(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
+					else if (num_args == 6) set_person_position(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
+					else
+					{
+						print_command("");
+						print_command("Usage: Sets the position of the specified person");
+						print_command("\"/person set position <person> <x> [y z]\"");
+					}
+				}
+				else if (_stricmp(args[2], "angle") == 0)
+				{
+					if (num_args == 4) set_person_angle(atoi(args[3]), 1, atof(args[4]));
+					else if (num_args == 5) set_person_angle(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
+					else if (num_args == 6) set_person_angle(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
+					else
+					{
+						print_command("");
+						print_command("Usage: Sets the angle of rotation for the specified person");
+						print_command("\"/person set angle <person> <x> [y z]\"");
+					}
+				}
+				else if (_stricmp(args[2], "body_part_angle") == 0)
+				{
+					if (num_args == 5) rotate_body_part_angle(atoi(args[3]), args[4], 1, atof(args[5]));
+					else if (num_args == 6) rotate_body_part_angle(atoi(args[3]), args[4], 2, atof(args[5]), atof(args[6]));
+					else if (num_args == 7) rotate_body_part_angle(atoi(args[3]), args[4], 3, atof(args[5]), atof(args[6]), atof(args[7]));
+					else
+					{
+						print_command("");
+						print_command("Usage: Sets the angle of the specified body part of the specified person");
+						print_command("Body Parts: HEAD NECK BODY LEFT_BICEP LEFT_FOREARM");
+						print_command("            RIGHT_BICEP RIGHT_FOREARM LEFT_THIGH LEFT_CALF RIGHT_THIGH RIGHT_CALF");
+						print_command("\"/person set body_part_angle <person> <BODY_PART> <x> [y z]\"");
+					}
+				}
+				else if (_stricmp(args[2], "scale") == 0)
+				{
+					if (num_args == 4) set_person_scale(atoi(args[3]), atof(args[4]));
+					else
+					{
+						print_command("");
+						print_command("Usage: Sets the scale of the specified person");
+						print_command("\"/person set scale <person> <factor>\"");
+					}
+				}
+				else
+				{
+					print_command("");
+					print_command("Usage: Sets an attribute of the specified person");
+					print_command("\"/person set [position | angle | body_part_angle | scale]\"");
+				}
+			}
+			else
+			{
+				print_command("");
+				print_command("Usage: Sets an attribute of the specified person");
+				print_command("\"/person set [position | angle | body_part_angle | scale]\"");
+			}
+		}
+		else if (_stricmp(args[1], "jump") == 0)
+		{
+			if (num_args == 2)
+			{
+				jump(atoi(args[2]));
+			}
+			else
+			{
+				print_command("");
+				print_command("Usage: Makes a person jump");
+				print_command("\"/person jump <person>\"");
+			}
+		}
+		else if (_stricmp(args[1], "remove") == 0)
+		{
+			if (num_args == 2)
+			{
+				remove_person(atoi(args[2]));
+			}
+			else
+			{
+				print_command("");
+				print_command("Usage: Removes a person");
+				print_command("\"/person remove <person>\"");
+			}
+		}
+		else
+		{
+			char * sub_commands = get_sub_commands("person");
+			char str[100] = "/person ";
+			int str_length = strlen(str);
 
-	if (_stricmp(args[1], "help") == 0)
+			print_command("");
+			print_command("List of person commands:");
+			for (int i = 0; i < get_num_sub_commands(args[0]); i++)
+			{
+				memcpy(str + str_length, sub_commands + (i * 20), 20);
+				print_command(str);
+			}
+		}
+	}
+	else
 	{
 		char * sub_commands = get_sub_commands("person");
 		char str[100] = "/person ";
@@ -1426,193 +1678,4 @@ void person_commands(int num_args, char * args[])
 			print_command(str);
 		}
 	}
-	else if (_stricmp(args[1], "list") == 0)
-	{
-		list_people();
-	}
-	else if (_stricmp(args[1], "create") == 0)
-	{
-		if (num_args > 2 && _stricmp(args[2], "student") == 0)
-		{
-			if (num_args == 3) create_student(1, args[3]);
-			else if (num_args == 4) create_student(2, args[3], args[4]);
-			else if (num_args == 5) create_student(3, args[3], args[4], args[5]);
-			else if (num_args == 6) create_student(4, args[3], args[4], args[5], args[6]);
-			else if (num_args > 6)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Creates a new student with the specified colors");
-				print_command("Colors: skin red brown green blue gray white orange black grass");
-				print_command("\"/person create student skin_color shirt_color pants_color shoe_color\"");
-			}
-			else if (num_args < 3)
-			{
-				print_command("");
-				print_command("Usage: Creates a new student with the specified colors");
-				print_command("Colors: skin red brown green blue gray white orange black grass");
-				print_command("\"/person create student skin_color shirt_color pants_color shoe_color\"");
-			}
-		}
-		else if (num_args > 2 && _stricmp(args[2], "bystander") == 0)
-		{
-			if (num_args == 3) create_bystander(1, args[3]);
-			else if (num_args == 4) create_bystander(2, args[3], args[4]);
-			else if (num_args == 5) create_bystander(3, args[3], args[4], args[5]);
-			else if (num_args == 6) create_bystander(4, args[3], args[4], args[5], args[6]);
-			else if (num_args > 6)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Creates a new bystander with the specified colors");
-				print_command("Colors: skin red brown green blue gray white orange black grass");
-				print_command("\"/person create bystander skin_color shirt_color pants_color shoe_color\"");
-			}
-			else if (num_args < 4)
-			{
-				print_command("");
-				print_command("Usage: Creates a new bystander with the specified colors");
-				print_command("Colors: skin red brown green blue gray white orange black grass");
-				print_command("\"/person create bystander skin_color shirt_color pants_color shoe_color\"");
-			}
-		}
-		else if (num_args <= 2)
-		{
-			print_command("");
-			print_command("Usage: Creates a new student or bystander");
-			print_command("\"/person create [student | bystander]\"");
-		}
-	}
-	else if (_stricmp(args[1], "select") == 0)
-	{
-		if (num_args == 2)
-		{
-			select_person(atoi(args[2]));
-		}
-		else if (num_args < 2)
-		{
-			print_command("");
-			print_command("Usage: Selects a person");
-			print_command("\"/person select (int)person\"");
-		}
-	}
-	else if (_stricmp(args[1], "set") == 0)
-	{
-		if (num_args > 3 && (atoi(args[3]) < 0 || atoi(args[3]) > num_people - 1))
-		{
-			print_command("Invalid person selected");
-			return;
-		}
-		if (num_args >= 2 && _stricmp(args[2], "position") == 0)
-		{
-			if (num_args == 4) set_person_position(atoi(args[3]), 1, atof(args[4]));
-			else if (num_args == 5) set_person_position(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
-			else if (num_args == 6) set_person_position(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
-			else if (num_args > 6)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Sets the position of the specified person");
-				print_command("\"/person set position person x y z\"");
-			}
-			else if (num_args < 4)
-			{
-				print_command("");
-				print_command("Usage: Sets the position of the specified person");
-				print_command("\"/person set position person x y z\"");
-			}
-		}
-		else if (num_args >= 2 && _stricmp(args[2], "angle") == 0)
-		{
-			if (num_args == 4) set_person_angle(atoi(args[3]), 1, atof(args[4]));
-			else if (num_args == 5) set_person_angle(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
-			else if (num_args == 6) set_person_angle(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
-			else if (num_args > 6)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Sets the angle of rotation along the specified axis for the specified person");
-				print_command("\"/person set angle person x_angle y_angle z_angle\"");
-			}
-			else if (num_args < 4)
-			{
-				print_command("");
-				print_command("Usage: Sets the angle of rotation along the specified axis for the specified person");
-				print_command("\"/person set angle person x_angle y_angle z_angle\"");
-			}
-		}
-		else if (num_args >= 2 && _stricmp(args[2], "body_part_angle") == 0)
-		{
-			if (num_args == 5) rotate_body_part_angle(atoi(args[3]), args[4], 1, atof(args[5]));
-			else if (num_args == 6) rotate_body_part_angle(atoi(args[3]), args[4], 2, atof(args[5]), atof(args[6]));
-			else if (num_args == 7) rotate_body_part_angle(atoi(args[3]), args[4], 3, atof(args[5]), atof(args[6]), atof(args[7]));
-			else if (num_args > 7)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Sets the angle of the specified body part of the specified person");
-				print_command("Body Parts: HEAD NECK BODY LEFT_BICEP LEFT_FOREARM"); 
-				print_command("            RIGHT_BICEP RIGHT_FOREARM LEFT_THIGH LEFT_CALF RIGHT_THIGH RIGHT_CALF");
-				print_command("\"/person set body_part_angle person BODY_PART x y z\"");
-			}
-			else if (num_args < 5)
-			{
-				print_command("");
-				print_command("Usage: Sets the angle of the specified body part of the specified person");
-				print_command("Body Parts: HEAD NECK BODY LEFT_BICEP LEFT_FOREARM");
-				print_command("            RIGHT_BICEP RIGHT_FOREARM LEFT_THIGH LEFT_CALF RIGHT_THIGH RIGHT_CALF");
-				print_command("\"/person set body_part_angle person BODY_PART x y z\"");
-			}
-		}
-		else if (num_args >= 2 && _stricmp(args[2], "scale") == 0)
-		{
-			if (num_args == 4) set_person_scale(atoi(args[3]), atof(args[4]));
-			else if (num_args > 4)
-			{
-				print_command("");
-				print_command("Too many arguments!");
-				print_command("Usage: Sets the scale of the specified person");
-				print_command("\"/person set scale person factor\"");
-			}
-			else if (num_args < 4)
-			{
-				print_command("");
-				print_command("Usage: Sets the scale of the specified person");
-				print_command("\"/person set scale person factor\"");
-			}
-		}
-		else if (num_args >= 1)
-		{
-			print_command("");
-			print_command("Usage: Sets an attribute of the specified person");
-			print_command("\"/person set [position | angle | body_part_angle | scale ]\"");
-		}
-	}
-	else if (_stricmp(args[1], "jump") == 0)
-	{
-		if (num_args == 2)
-		{
-			jump(atoi(args[2]));
-		}
-		else if (num_args < 2)
-		{
-			print_command("");
-			print_command("Usage: Removes a person");
-			print_command("\"/person remove (int)person\"");
-		}
-	}
-	else if (_stricmp(args[1], "remove") == 0)
-	{
-		if (num_args == 2)
-		{
-			remove_person(atoi(args[2]));
-		}
-		else if (num_args < 2)
-		{
-			print_command("");
-			print_command("Usage: Removes a person");
-			print_command("\"/person remove (int)person\"");
-		}
-	}
-
 }
