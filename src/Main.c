@@ -18,6 +18,12 @@
 * Camera functions can be added to any project by copying over camera.c and camera.h.
 * Console commands! I spent all my time on this and ran out of time for the other stuff.
 *
+* I could animate my camera to go everywhere, but there's not much to see.
+* There are random bystanders wandering around automatically that change direction when they collide.
+* You can add up to 100 people, but it slows down tremendously after more than 10.
+* There's a lot of documentation missing and other objects.
+* 
+*
 * The controls for the student are:
 * - UP - Tilt Head Forward
 * - DOWN - Tilt Head Backward
@@ -33,7 +39,9 @@
 * - 'M' - Toggle Mode
 * - 'B' - Toggle Bounds
 * - 'R' - Reset Position
-* - F1 - Start tour
+* - SPACE - Jump / elevate camera
+* - ENTER - opens console
+* - F1 - Start tour (shows off console)
 * These controls are also printed on the screen.
 *
 */
@@ -185,6 +193,7 @@ static void tour(void)
 	set_camera_position(3, -100.0, 2.35, -225.0);
 	reset_person();
 	set_person_position(0, 3, -100.0, 18.0, -215.0);
+	clear_history();
 	open_command_prompt();
 	char str[100] = "";
 	char welcome[10][100] = { "Hi! Welcome to my program!\r", "There's not much to see, but there's a lot of functionality!\r",
@@ -196,11 +205,11 @@ static void tour(void)
 	                           "Lighting controls the lighting and person controls the people. Duh.\r"};
 
 	char lighting[10][100] = { "/lighting\r", "Lighting can do almost anything with lights!\r", "Disable them\r",
-							   "/lighting disable 1\r", "Enable them\r", "/lighting enable 1\r", "Set allows you to change many properties of light",
+							   "/lighting disable 1\r", "Enable them\r", "/lighting enable 1\r", "Set allows you to change many properties of light\r",
 	                           "/lighting set\r" };
 
-	char person[10][100] = { "/person help\r", "Person commands control people\r", "Create them\r", "/person create student skin\r", 
-	                         "Move them\r", "/person set position 2 -97.0 18.0 -215.0\r" };
+	char person[10][100] = { "/person help\r", "Person commands control people\r", "Create them\r", "/person create student\r", 
+	                         "Move them\r", "Remove them\r" };
 
 	char done[10][100] = { "Well that's it\r", "There's a lot more I would like to implement, but didn't have time to\r",
 						   "I hope you enjoyed!\r", "Bye!\r"};
@@ -251,9 +260,10 @@ static void tour(void)
 			display();
 		}
 		clear_prompt();
+		if (i == 4) set_person_position(get_num_people() - 1, 3, -101.0, 18.0, -215.0);
+		if (i == 5) { Sleep(1000); remove_person(get_num_people() - 1); }
+		display();
 	}
-
-	write_to_prompt("/person set body_part_angle 0 HEAD 0 -45 0\r");
 
 	Sleep(100);
 	for (int i = 0; i < 10; i++)
@@ -266,6 +276,8 @@ static void tour(void)
 		}
 		clear_prompt();
 	}
+
+	close_command_prompt();
 }
 
 /// <summary>
@@ -361,7 +373,7 @@ void keys(unsigned char key, int x, int y)
 			break;
 		case 'c':
 		case 'C':
-			create_light(1, get_camera_position());
+			create_light(1, get_camera_position()[0], get_camera_position()[1], get_camera_position()[2]);
 			break;
 		case 'd':
 		case 'D':
@@ -390,8 +402,8 @@ void keys(unsigned char key, int x, int y)
 		case 'S':
 			if (!control_mode)
 			{
-				translate_person(-get_person(get_selected_person()).speed);
-				if (collision_detected(get_bounds())) translate_person(get_person(get_selected_person()).speed);
+				translate_person(get_selected_person(), -get_person(get_selected_person()).speed);
+				if (collision_detected(get_bounds())) translate_person(get_selected_person(), get_person(get_selected_person()).speed);
 			}
 			else
 			{
@@ -403,8 +415,8 @@ void keys(unsigned char key, int x, int y)
 		case 'W':
 			if (!control_mode)
 			{
-				translate_person(get_person(get_selected_person()).speed);
-				if (collision_detected(get_bounds())) translate_person(-get_person(get_selected_person()).speed);
+				translate_person(get_selected_person(), get_person(get_selected_person()).speed);
+				if (collision_detected(get_bounds())) translate_person(get_selected_person() , -get_person(get_selected_person()).speed);
 			}
 			else
 			{
@@ -546,6 +558,19 @@ void timer(int fps)
 		toggle_daylight();
 	}
 
+	/* Update uncontrolled people's location */
+	for (int i = 0; i < get_num_people(); i++)
+	{
+		if (i != get_selected_person())
+		{
+			translate_person(i, get_person(i).speed);
+			if (collision_detected(get_person(i).bounds))
+			{
+				translate_person(i, -get_person(i).speed);
+				set_person_angle(1, i, 3, 0.0, (double)(rand() % 360), 0.0);
+			}
+		}
+	}
 	glutPostRedisplay();
 	glutTimerFunc(1000 / fps, timer, fps);
 }
@@ -662,7 +687,36 @@ void glInit(void)
 	initialize_people();
 	create_student(0);
 	create_bystander(0);
-	set_person_position(1, 3, -100.0, 18.0, -200.0);
+	create_bystander(4, "skin", "black", "green", "brown");
+	create_bystander(4, "skin", "black", "green", "brown");
+	create_bystander(4, "skin", "black", "green", "brown");
+
+	/* Set random positions for the bystanders */
+	for (int i = 1; i < get_num_people(); i++)
+	{
+		int position_set = 1;
+		while (position_set)
+		{
+			switch (rand() % 3)
+			{
+			case 0:
+				set_person_position(1, 3, (float)(rand() % (int)get_ground_size()[1]), 18.0, (float)(rand() % (int)get_ground_size()[3]));
+				break;
+			case 1:
+				set_person_position(1, 3, (float)(rand() % (int)get_ground_size()[1]), 18.0, (float)(-rand() % (int)get_ground_size()[3]));
+				break;
+			case 2:
+				set_person_position(1, 3, (float)(-rand() % (int)get_ground_size()[1]), 18.0, (float)(-rand() % (int)get_ground_size()[3]));
+				break;
+			case 3:
+				set_person_position(1, 3, (float)(-rand() % (int)get_ground_size()[1]), 18.0, (float)(rand() % (int)get_ground_size()[3]));
+				break;
+			default:
+				break;
+			}
+			position_set = collision_detected(get_person(i).bounds);
+		}
+	}
 
 	clear_history();
 }
