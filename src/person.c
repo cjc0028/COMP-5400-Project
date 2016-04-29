@@ -5,7 +5,7 @@
 * Date: 3/1/2016
 * Description: Functions for drawing individual parts of the 3D student
 */
-#define MAX_PEOPLE 10
+#define MAX_PEOPLE 100
 #define NUM_BODY_PARTS 11
 #define _USE_MATH_DEFINES
 #include<math.h>
@@ -15,6 +15,7 @@
 #include<stdlib.h>
 #include<GL\glut.h>
 #include "person.h"
+#include "camera.h"
 #include "shapes.h"
 #include "command_processor.h"
 
@@ -1081,6 +1082,9 @@ void select_person(int person)
 	else
 	{
 		selected_person = person;
+		set_camera_position(3, people[person].position[0], people[person].position[1] + 10, people[person].position[2]);
+		set_camera_target(3, people[person].position[0], 0, people[person].position[2]);
+		set_camera_angle(2, 0.0, -90.0);
 	}
 }
 
@@ -1096,6 +1100,7 @@ void remove_person(int person)
 		{
 			people[i] = people[i + 1];
 		}
+		if (person == selected_person) selected_person = 0;
 		num_people--;
 	}
 }
@@ -1149,12 +1154,12 @@ void rotate_person(GLfloat phi, GLfloat psi)
 	people[selected_person].angle[1] = (int)(people[selected_person].angle[1] + psi) % 360;
 }
 
-void translate_person(GLfloat delta)
+void translate_person(int person, GLfloat delta)
 {
-	people[selected_person].position[0] += delta * people[selected_person].scale * sin(people[selected_person].angle[1] * (M_PI / 180));
-	people[selected_person].bounds[0] = people[selected_person].position[0];
-	people[selected_person].position[2] += delta * people[selected_person].scale * cos(people[selected_person].angle[1] * (M_PI / 180));
-	people[selected_person].bounds[2] = people[selected_person].position[2];
+	people[person].position[0] += delta * people[person].scale * sin(people[person].angle[1] * (M_PI / 180));
+	people[person].bounds[0] = people[person].position[0];
+	people[person].position[2] += delta * people[person].scale * cos(people[person].angle[1] * (M_PI / 180));
+	people[person].bounds[2] = people[person].position[2];
 }
 
 void scale_person(GLfloat factor)
@@ -1241,7 +1246,7 @@ void set_person_scale(int person, GLfloat scale)
 	}
 }
 
-void set_person_angle(int person, int num_args, ...)
+void set_person_angle(int suppress_msg, int person, int num_args, ...)
 {
 	
 	if (person < 0 || person > num_people)
@@ -1272,6 +1277,13 @@ void set_person_angle(int person, int num_args, ...)
 		}
 
 		va_end(arguments);
+
+		if (!suppress_msg)
+		{
+			char str[100];
+			sprintf_s(str, 50, "Set angle of person %i to %.1f, %.1f, %.1f", person, people[person].angle[0], people[person].angle[1], people[person].angle[2]);
+			print_command(str);
+		}
 	}
 }
 
@@ -1575,9 +1587,9 @@ void person_commands(int num_args, char * args[])
 				}
 				else if (_stricmp(args[2], "angle") == 0)
 				{
-					if (num_args == 4) set_person_angle(atoi(args[3]), 1, atof(args[4]));
-					else if (num_args == 5) set_person_angle(atoi(args[3]), 2, atof(args[4]), atof(args[5]));
-					else if (num_args == 6) set_person_angle(atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
+					if (num_args == 4) set_person_angle(0, atoi(args[3]), 1, atof(args[4]));
+					else if (num_args == 5) set_person_angle(0, atoi(args[3]), 2, atof(args[4]), atof(args[5]));
+					else if (num_args == 6) set_person_angle(0, atoi(args[3]), 3, atof(args[4]), atof(args[5]), atof(args[6]));
 					else
 					{
 						print_command("");
