@@ -27,15 +27,16 @@ void initialize_people(void);
 
 void create_student(int num_args, ...);
 void create_bystander(int num_args, ...);
+void remove_person(int person);
 
 void draw_person(int person);
 void rotate_person(GLfloat phi, GLfloat psi);
-void translate_person(GLfloat delta);
+void translate_person(int person, GLfloat delta);
 void scale_person(GLfloat factor);
 void jump(int person);
 void rotate_head(GLfloat phi, GLfloat psi);
 void set_person_position(int person, int num_args, ...);
-void set_person_angle(int person, int num_args, ...);
+void set_person_angle(int suppress_msg, int person, int num_args, ...);
 void set_person_scale(int person, GLfloat scale);
 GLfloat * get_position(void);
 Person * get_people(void);
