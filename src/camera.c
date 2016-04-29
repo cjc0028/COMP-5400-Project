@@ -179,7 +179,7 @@ void set_camera_angle(int num_args, ...)
 	}
 
 	char str[100];
-	sprintf_s(str, sizeof str, "Set angle of the camera to %.1f on the y axis, %.1f on the x axis", camera.position[0], camera.position[1]);
+	sprintf_s(str, sizeof str, "Set angle of the camera to %.1f on the y axis, %.1f on the x axis", camera.angle[0], camera.angle[1]);
 	print_command(str);
 }
 
