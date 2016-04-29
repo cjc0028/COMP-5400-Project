@@ -15,7 +15,7 @@
 #include "command_processor.h"
 
 #define BUFFER_SIZE 100
-#define C_HISTORY_SIZE 30
+#define C_HISTORY_SIZE 29
 
 static int prompt_state = PROMPT_CLOSE;
 
